@@ -115,7 +115,7 @@ export function StandingsView() {
                         pos === 3 ? 'bg-amber-700/10 text-amber-600 border border-amber-700/20' :
                         'text-zinc-500'
                       }`}>
-                        {pos}
+                        {standing.position}
                       </span>
                     </td>
                     <td className="px-4 py-3">
@@ -174,7 +174,7 @@ export function StandingsView() {
                         pos === 3 ? 'bg-amber-700/10 text-amber-600 border border-amber-700/20' :
                         'text-zinc-500'
                       }`}>
-                        {pos}
+                        {standing.position}
                       </span>
                     </td>
                     <td className="px-4 py-3">

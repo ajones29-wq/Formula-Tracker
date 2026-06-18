@@ -87,7 +87,7 @@ export function ResultsView() {
                 
                 return (
                   <tr 
-                    key={result.number}
+                    key={`${result.position}-${result.Driver.driverId}`}
                     className="hover:bg-zinc-800/30 transition-colors group"
                   >
                     <td className="px-4 py-3 text-center">

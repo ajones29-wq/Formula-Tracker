@@ -9,6 +9,17 @@
         { "name": "createdAt", "type": "timestamp" },
         { "name": "lastLoginAt", "type": "timestamp" }
       ]
+    },
+    {
+      "name": "member_posts",
+      "fields": [
+        { "name": "content", "type": "string" },
+        { "name": "authorId", "type": "string" },
+        { "name": "authorName", "type": "string" },
+        { "name": "authorPhoto", "type": "string" },
+        { "name": "createdAt", "type": "timestamp" },
+        { "name": "tag", "type": "string" }
+      ]
     }
   ]
 }
