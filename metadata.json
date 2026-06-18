@@ -1,0 +1,6 @@
+{
+  "name": "Formula Tracker",
+  "description": "Real-time tracker for Formula 1 standings, results, and upcoming grand prix schedule.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

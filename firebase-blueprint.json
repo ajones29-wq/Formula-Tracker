@@ -1,0 +1,14 @@
+{
+  "collections": [
+    {
+      "name": "users",
+      "fields": [
+        { "name": "email", "type": "string" },
+        { "name": "displayName", "type": "string" },
+        { "name": "photoURL", "type": "string" },
+        { "name": "createdAt", "type": "timestamp" },
+        { "name": "lastLoginAt", "type": "timestamp" }
+      ]
+    }
+  ]
+}
