@@ -3,7 +3,6 @@ import { getCurrentSchedule } from '../api';
 import { Race } from '../types';
 import { Calendar, MapPin, Clock, ChevronRight } from 'lucide-react';
 import { RaceResultsModal } from './RaceResultsModal';
-import { Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 
 export function ScheduleView() {
   const [races, setRaces] = useState<Race[]>([]);
@@ -63,8 +62,12 @@ export function ScheduleView() {
     const isThisWeekend = (raceDate.getTime() - now.getTime()) < 7 * 24 * 60 * 60 * 1000;
 
     return (
-      <div className="mb-8 relative overflow-hidden rounded-2xl border border-red-900/40 bg-gradient-to-br from-red-950/40 to-zinc-950 flex flex-col lg:flex-row">
-        <div className="p-6 sm:p-8 flex-1 relative z-10">
+      <div className="mb-8 relative overflow-hidden rounded-2xl border border-red-900/40 bg-gradient-to-br from-red-950/40 to-zinc-950 p-6 sm:p-8">
+        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+          <Calendar className="w-48 h-48" />
+        </div>
+        
+        <div className="relative z-10">
           <div className="flex items-center gap-3 mb-6">
             <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
               Next Race
@@ -118,31 +121,6 @@ export function ScheduleView() {
               </div>
             </div>
           </div>
-        </div>
-        
-        <div className="h-64 lg:h-auto lg:w-96 shrink-0 relative lg:border-l border-zinc-800">
-          <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-zinc-950 to-transparent z-10 lg:hidden pointer-events-none" />
-          <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-zinc-950 to-transparent z-10 hidden lg:block pointer-events-none" />
-          <Map
-            defaultCenter={{
-              lat: parseFloat(race.Circuit.Location.lat),
-              lng: parseFloat(race.Circuit.Location.long)
-            }}
-            defaultZoom={13}
-            mapId="CIRCUIT_MAP"
-            internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
-            disableDefaultUI={true}
-            style={{width: '100%', height: '100%'}}
-          >
-            <AdvancedMarker 
-              position={{
-                lat: parseFloat(race.Circuit.Location.lat),
-                lng: parseFloat(race.Circuit.Location.long)
-              }}
-            >
-              <Pin background="#dc2626" glyphColor="#fff" borderColor="#991b1b" />
-            </AdvancedMarker>
-          </Map>
         </div>
       </div>
     );

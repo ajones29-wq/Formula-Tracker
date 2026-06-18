@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { X, Calendar, MapPin, Trophy, AlertCircle, Timer } from 'lucide-react';
 import { getRaceResults } from '../api';
-import { Race } from '../types';
-import { Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
+import { Race, Driver } from '../types';
+import { DriverProfileModal } from './DriverProfileModal';
 
 interface RaceResultsModalProps {
   race: Race;
@@ -13,6 +13,7 @@ export function RaceResultsModal({ race, onClose }: RaceResultsModalProps) {
   const [raceResults, setRaceResults] = useState<Race | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -81,29 +82,6 @@ export function RaceResultsModal({ race, onClose }: RaceResultsModalProps) {
 
         {/* Content */}
         <div className="overflow-y-auto flex-1 no-scrollbar flex flex-col">
-          <div className="h-48 sm:h-64 shrink-0 border-b border-zinc-800 relative z-0">
-            <Map
-              defaultCenter={{
-                lat: parseFloat(race.Circuit.Location.lat),
-                lng: parseFloat(race.Circuit.Location.long)
-              }}
-              defaultZoom={13}
-              mapId="CIRCUIT_MAP"
-              internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
-              disableDefaultUI={true}
-              style={{width: '100%', height: '100%'}}
-            >
-              <AdvancedMarker 
-                position={{
-                  lat: parseFloat(race.Circuit.Location.lat),
-                  lng: parseFloat(race.Circuit.Location.long)
-                }}
-              >
-                <Pin background="#dc2626" glyphColor="#fff" borderColor="#991b1b" />
-              </AdvancedMarker>
-            </Map>
-          </div>
-          
           <div className="p-6">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -153,9 +131,12 @@ export function RaceResultsModal({ race, onClose }: RaceResultsModalProps) {
                               <div className="h-6 w-1 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                               <div>
                                 <p className="font-semibold text-zinc-100">
-                                  <a href={result.Driver.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                                  <button 
+                                    onClick={() => setSelectedDriver(result.Driver)} 
+                                    className="hover:underline text-left"
+                                  >
                                     {result.Driver.givenName} <span className="uppercase text-white relative">{result.Driver.familyName}</span>
-                                  </a>
+                                  </button>
                                 </p>
                                 <p className="text-xs text-zinc-500 sm:hidden">
                                   <a href={result.Constructor.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
@@ -203,6 +184,10 @@ export function RaceResultsModal({ race, onClose }: RaceResultsModalProps) {
           </div>
         </div>
       </div>
+
+      {selectedDriver && (
+        <DriverProfileModal driver={selectedDriver} onClose={() => setSelectedDriver(null)} />
+      )}
     </div>
   );
 }

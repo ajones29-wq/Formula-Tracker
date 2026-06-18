@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { getLastRaceResults } from '../api';
-import { Race } from '../types';
+import { Race, Driver } from '../types';
 import { Timer, CheckCircle2, AlertCircle } from 'lucide-react';
+import { DriverProfileModal } from './DriverProfileModal';
 
 export function ResultsView() {
   const [race, setRace] = useState<Race | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -101,9 +103,12 @@ export function ResultsView() {
                         <div className="h-6 w-1 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div>
                           <p className="font-semibold text-zinc-100">
-                            <a href={result.Driver.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                            <button 
+                              onClick={() => setSelectedDriver(result.Driver)} 
+                              className="hover:underline text-left"
+                            >
                               {result.Driver.givenName} <span className="uppercase text-white relative">{result.Driver.familyName}</span>
-                            </a>
+                            </button>
                           </p>
                           <p className="text-xs text-zinc-500 sm:hidden">
                             <a href={result.Constructor.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
@@ -147,6 +152,10 @@ export function ResultsView() {
           </table>
         </div>
       </div>
+
+      {selectedDriver && (
+        <DriverProfileModal driver={selectedDriver} onClose={() => setSelectedDriver(null)} />
+      )}
     </div>
   );
 }
