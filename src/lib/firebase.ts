@@ -17,7 +17,7 @@ const initFirebase = async () => {
     const config = await response.json();
     app = initializeApp(config);
     auth = getAuth(app);
-    db = getFirestore(app);
+    db = getFirestore(app, config.firestoreDatabaseId);
     return { app, auth, db };
   } catch (error) {
     console.error('Error initializing Firebase:', error);

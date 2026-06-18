@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { getCurrentDriverStandings, getCurrentConstructorStandings } from '../api';
-import { DriverStanding, ConstructorStanding, Driver } from '../types';
+import { DriverStanding, ConstructorStanding, Driver, Constructor } from '../types';
 import { Trophy, Users, User } from 'lucide-react';
 import { DriverProfileModal } from './DriverProfileModal';
+import { ConstructorProfileModal } from './ConstructorProfileModal';
 
 type StandingsType = 'drivers' | 'constructors';
 
@@ -13,6 +14,7 @@ export function StandingsView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
+  const [selectedConstructor, setSelectedConstructor] = useState<Constructor | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -129,17 +131,23 @@ export function StandingsView() {
                             </button>
                           </p>
                           <p className="text-xs text-zinc-500 sm:hidden">
-                            <a href={standing.Constructors[0]?.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                            <button 
+                              onClick={() => standing.Constructors[0] && setSelectedConstructor(standing.Constructors[0])} 
+                              className="hover:underline text-left"
+                            >
                               {standing.Constructors[0]?.name}
-                            </a>
+                            </button>
                           </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 hidden sm:table-cell text-zinc-400">
-                      <a href={standing.Constructors[0]?.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      <button 
+                        onClick={() => standing.Constructors[0] && setSelectedConstructor(standing.Constructors[0])} 
+                        className="hover:underline text-left"
+                      >
                         {standing.Constructors[0]?.name}
-                      </a>
+                      </button>
                     </td>
                     <td className="px-4 py-3 text-right">
                       <span className="font-mono font-bold text-lg text-white">
@@ -174,9 +182,12 @@ export function StandingsView() {
                         <div className="h-6 w-1 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div>
                           <p className="font-semibold text-zinc-100 text-lg">
-                            <a href={standing.Constructor.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                            <button 
+                              onClick={() => setSelectedConstructor(standing.Constructor)} 
+                              className="hover:underline text-left"
+                            >
                               {standing.Constructor.name}
-                            </a>
+                            </button>
                           </p>
                           <p className="text-xs text-zinc-500">
                             {standing.Constructor.nationality}
@@ -202,6 +213,10 @@ export function StandingsView() {
 
       {selectedDriver && (
         <DriverProfileModal driver={selectedDriver} onClose={() => setSelectedDriver(null)} />
+      )}
+
+      {selectedConstructor && (
+        <ConstructorProfileModal constructorData={selectedConstructor} onClose={() => setSelectedConstructor(null)} />
       )}
     </div>
   );

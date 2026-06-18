@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { X, Calendar, MapPin, Trophy, AlertCircle, Timer } from 'lucide-react';
 import { getRaceResults } from '../api';
-import { Race, Driver } from '../types';
+import { Race, Driver, Constructor } from '../types';
 import { DriverProfileModal } from './DriverProfileModal';
+import { ConstructorProfileModal } from './ConstructorProfileModal';
 
 interface RaceResultsModalProps {
   race: Race;
@@ -14,6 +15,7 @@ export function RaceResultsModal({ race, onClose }: RaceResultsModalProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
+  const [selectedConstructor, setSelectedConstructor] = useState<Constructor | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -139,17 +141,23 @@ export function RaceResultsModal({ race, onClose }: RaceResultsModalProps) {
                                   </button>
                                 </p>
                                 <p className="text-xs text-zinc-500 sm:hidden">
-                                  <a href={result.Constructor.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                                  <button 
+                                    onClick={() => setSelectedConstructor(result.Constructor)} 
+                                    className="hover:underline text-left"
+                                  >
                                     {result.Constructor.name}
-                                  </a>
+                                  </button>
                                 </p>
                               </div>
                             </div>
                           </td>
                           <td className="px-4 py-3 hidden sm:table-cell text-zinc-400">
-                            <a href={result.Constructor.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                            <button 
+                              onClick={() => setSelectedConstructor(result.Constructor)} 
+                              className="hover:underline text-left"
+                            >
                               {result.Constructor.name}
-                            </a>
+                            </button>
                           </td>
                           <td className="px-4 py-3 text-right">
                             {result.Time ? (
@@ -187,6 +195,10 @@ export function RaceResultsModal({ race, onClose }: RaceResultsModalProps) {
 
       {selectedDriver && (
         <DriverProfileModal driver={selectedDriver} onClose={() => setSelectedDriver(null)} />
+      )}
+
+      {selectedConstructor && (
+        <ConstructorProfileModal constructorData={selectedConstructor} onClose={() => setSelectedConstructor(null)} />
       )}
     </div>
   );
