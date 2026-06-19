@@ -12,6 +12,7 @@ import { AIPredictorView } from './components/AIPredictorView';
 import { ProfileView } from './components/ProfileView';
 import { ArchivalResultsView } from './components/ArchivalResultsView';
 import { MembersAreaView } from './components/MembersAreaView';
+import { RaceCountdown } from './components/RaceCountdown';
 import { Calendar, Trophy, Timer, Bot, User as UserIcon, Archive, Award, ChevronDown, ExternalLink } from 'lucide-react';
 
 type Tab = 'standings' | 'results' | 'archive' | 'members' | 'schedule' | 'ai' | 'profile';
@@ -25,6 +26,8 @@ export default function App() {
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
+        <RaceCountdown />
+
         {/* Navigation Tabs */}
         <div className="flex border-b border-zinc-800 mb-8 overflow-visible">
           <div className="flex space-x-8">
@@ -68,28 +71,36 @@ export default function App() {
                 </a>
               </div>
             </div>
-            <button
-              onClick={() => setActiveTab('results')}
-              className={`pb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors whitespace-nowrap border-b-2 ${
-                activeTab === 'results'
-                  ? 'border-red-600 text-white'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-700'
-              }`}
-            >
-              <Timer className="w-4 h-4" />
-              Latest Results
-            </button>
-            <button
-              onClick={() => setActiveTab('archive')}
-              className={`pb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors whitespace-nowrap border-b-2 ${
-                activeTab === 'archive'
-                  ? 'border-red-600 text-white'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-700'
-              }`}
-            >
-              <Archive className="w-4 h-4" />
-              Archive
-            </button>
+            
+            <div className="relative group/dropdown">
+              <button
+                className={`pb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors whitespace-nowrap border-b-2 ${
+                  (activeTab === 'results' || activeTab === 'archive')
+                    ? 'border-red-600 text-white'
+                    : 'border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-700'
+                }`}
+              >
+                <Timer className="w-4 h-4" />
+                Results
+                <ChevronDown className="w-4 h-4 ml-1 opacity-50" />
+              </button>
+              
+              <div className="absolute top-full left-0 mt-0 w-48 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl opacity-0 invisible group-hover/dropdown:opacity-100 group-hover/dropdown:visible transition-all z-50 overflow-hidden flex flex-col">
+                <button
+                  onClick={() => setActiveTab('results')}
+                  className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${activeTab === 'results' ? 'bg-red-600/10 text-red-500' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'}`}
+                >
+                  Latest Results
+                </button>
+                <button
+                  onClick={() => setActiveTab('archive')}
+                  className={`w-full text-left px-4 py-3 text-sm font-bold transition-colors ${activeTab === 'archive' ? 'bg-red-600/10 text-red-500' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'}`}
+                >
+                  Archive
+                </button>
+              </div>
+            </div>
+
             <button
               onClick={() => setActiveTab('members')}
               className={`pb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors whitespace-nowrap border-b-2 ${
