@@ -29,7 +29,11 @@ import {
   ShieldAlert, 
   Timer,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  CloudRain,
+  Thermometer,
+  MessageCircle,
+  Activity
 } from 'lucide-react';
 
 // Formatted Firebase error handling as requested by system rules
@@ -310,7 +314,7 @@ export function MembersAreaView() {
               </h2>
             </div>
           </div>
-          <div className="font-mono text-xs text-zinc-500 bg-zinc-950 border border-zinc-800 px-3/5 py-1.5 rounded-lg">
+          <div className="font-mono text-xs text-zinc-500 bg-zinc-950 border border-zinc-800 px-3 py-1.5 rounded-lg">
             SECRET ACCESS TOKEN: <span className="text-green-500 font-bold">ACTIVE</span>
           </div>
         </div>
@@ -499,7 +503,7 @@ export function MembersAreaView() {
                       )}
                     </div>
 
-                    <p className="text-xs text-zinc-350 leading-relaxed break-words whitespace-pre-wrap">
+                    <p className="text-xs text-zinc-300 leading-relaxed break-words whitespace-pre-wrap">
                       {post.content}
                     </p>
                   </div>
@@ -507,6 +511,321 @@ export function MembersAreaView() {
               )}
             </div>
           </div>
+        </div>
+
+        {/* New Row: Additional Paddock Club Features */}
+        <div className="lg:col-span-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mt-4">
+          
+          {/* Race Control Communications */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col h-full">
+            <div className="flex items-center gap-3 border-b border-zinc-800 pb-4 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                <Flame className="w-4 h-4 text-emerald-500" />
+              </div>
+              <div>
+                <h3 className="text-md font-bold uppercase tracking-widest text-white italic">Race Control Radio</h3>
+                <p className="text-[10px] text-zinc-400">Decrypted pitwall communications</p>
+              </div>
+            </div>
+            
+            <div className="flex-1 space-y-4">
+               <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800/80 hover:border-zinc-700 transition-colors">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] uppercase font-bold text-emerald-500 tracking-wider">Pit Wall ➔ Car 16</span>
+                    <span className="text-[10px] text-zinc-600 font-mono">Lap 42</span>
+                  </div>
+                  <p className="text-xs text-zinc-300 italic font-mono">"Box, box. Pit confirm. Let's cover the undercut risk from Car 4. Soft tires waiting."</p>
+               </div>
+               <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800/80 hover:border-zinc-700 transition-colors">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] uppercase font-bold text-blue-500 tracking-wider">Car 4 ➔ Pit Wall</span>
+                    <span className="text-[10px] text-zinc-600 font-mono">Lap 43</span>
+                  </div>
+                  <p className="text-xs text-zinc-300 italic font-mono">"Tires feel completely gone. I'm losing the rear in Sector 3."</p>
+               </div>
+               <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800/80 hover:border-zinc-700 transition-colors">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] uppercase font-bold text-red-500 tracking-wider">Race Control</span>
+                    <span className="text-[10px] text-zinc-600 font-mono">System</span>
+                  </div>
+                  <p className="text-xs text-zinc-300 italic font-mono">"VIRTUAL SAFETY CAR DEPLOYED. Debris reported at Turn 8."</p>
+               </div>
+            </div>
+            <button className="w-full mt-4 py-3 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs font-bold text-white uppercase tracking-widest transition-colors flex justify-center items-center gap-2">
+              <Lock className="w-3 h-3" /> Connect to Audio Stream (Premium)
+            </button>
+          </div>
+
+          {/* Members Only Events */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col h-full">
+            <div className="flex items-center gap-3 border-b border-zinc-800 pb-4 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                <Award className="w-4 h-4 text-amber-500" />
+              </div>
+              <div>
+                <h3 className="text-md font-bold uppercase tracking-widest text-white italic">Exclusive Events</h3>
+                <p className="text-[10px] text-zinc-400">VIP meetups and factory tours</p>
+              </div>
+            </div>
+            
+            <div className="flex-1 space-y-4">
+               <div className="flex gap-4">
+                 <div className="w-14 items-center justify-center flex flex-col bg-zinc-950 rounded-lg border border-zinc-800 shrink-0 h-16">
+                   <span className="text-[10px] font-bold text-red-500 uppercase">JUL</span>
+                   <span className="text-lg font-black text-white">14</span>
+                 </div>
+                 <div className="flex flex-col justify-center">
+                   <h4 className="text-sm font-bold text-white uppercase tracking-wide">Silverstone Factory Tour</h4>
+                   <p className="text-[10px] text-zinc-400 mt-1">Guided aero lab experience. Limited to 20 members.</p>
+                   <span className="text-[9px] text-emerald-500 uppercase font-bold mt-2">Tickets Available</span>
+                 </div>
+               </div>
+               
+               <div className="flex gap-4">
+                 <div className="w-14 items-center justify-center flex flex-col bg-zinc-950 rounded-lg border border-zinc-800 shrink-0 h-16 opacity-60">
+                   <span className="text-[10px] font-bold text-red-500 uppercase">AUG</span>
+                   <span className="text-lg font-black text-white">28</span>
+                 </div>
+                 <div className="flex flex-col justify-center opacity-60">
+                   <h4 className="text-sm font-bold text-white uppercase tracking-wide">Monza Track Walk</h4>
+                   <p className="text-[10px] text-zinc-400 mt-1">Walk the track with legendary engineers.</p>
+                   <span className="text-[9px] text-red-500 uppercase font-bold mt-2">Sold Out</span>
+                 </div>
+               </div>
+
+                <div className="flex gap-4">
+                 <div className="w-14 items-center justify-center flex flex-col bg-zinc-950 rounded-lg border border-zinc-800 shrink-0 h-16">
+                   <span className="text-[10px] font-bold text-red-500 uppercase">NOV</span>
+                   <span className="text-lg font-black text-white">21</span>
+                 </div>
+                 <div className="flex flex-col justify-center">
+                   <h4 className="text-sm font-bold text-white uppercase tracking-wide">Vegas Paddock Meetup</h4>
+                   <p className="text-[10px] text-zinc-400 mt-1">Exclusive cocktail party in the neon paddock.</p>
+                   <span className="text-[9px] text-amber-500 uppercase font-bold mt-2">RSVP Opening Soon</span>
+                 </div>
+               </div>
+            </div>
+             <button className="w-full mt-4 py-3 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs font-bold text-white uppercase tracking-widest transition-colors flex justify-center items-center gap-2">
+              View Calendar
+            </button>
+          </div>
+
+          {/* Virtual Engineering Desk */}
+           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col h-full md:col-span-2 xl:col-span-1">
+            <div className="flex items-center gap-3 border-b border-zinc-800 pb-4 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+                <Gauge className="w-4 h-4 text-indigo-500" />
+              </div>
+              <div>
+                <h3 className="text-md font-bold uppercase tracking-widest text-white italic">Engineering Desk</h3>
+                <p className="text-[10px] text-zinc-400">Technical insights direct from the garage</p>
+              </div>
+            </div>
+            
+            <div className="flex-1 flex flex-col gap-4">
+              <div className="relative h-40 bg-zinc-950 rounded-xl border border-zinc-800 overflow-hidden group">
+                 <div className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-60 transition-opacity" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1549463990-25251a37c0bb?auto=format&fit=crop&q=80&w=800')" }}></div>
+                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>
+                 <div className="absolute bottom-4 left-4 right-4">
+                   <span className="text-[10px] font-black uppercase text-indigo-400 bg-indigo-950/50 px-2 py-0.5 rounded border border-indigo-900/50 mb-2 inline-block">Aero Update</span>
+                   <h4 className="text-sm font-bold text-white">Analysis: New Floor Edge Wings</h4>
+                   <p className="text-[10px] text-zinc-300 mt-1 line-clamp-2">A deep dive into how the new vortex generators along the floor edge improve high-speed downforce stability.</p>
+                 </div>
+              </div>
+
+               <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800/80">
+                  <h4 className="text-xs font-bold text-white uppercase mb-2">Simulated Upgrades Tracker</h4>
+                  <div className="space-y-3 mt-3">
+                    <div>
+                      <div className="flex justify-between text-[10px] text-zinc-400 mb-1">
+                        <span>Front Wing Development</span>
+                        <span>85%</span>
+                      </div>
+                      <div className="w-full bg-zinc-900 rounded-full h-1.5">
+                        <div className="bg-indigo-500 h-1.5 rounded-full" style={{ width: '85%' }}></div>
+                      </div>
+                    </div>
+                     <div>
+                      <div className="flex justify-between text-[10px] text-zinc-400 mb-1">
+                        <span>Power Unit Mapping</span>
+                        <span>100% (Deployed)</span>
+                      </div>
+                      <div className="w-full bg-zinc-900 rounded-full h-1.5">
+                        <div className="bg-green-500 h-1.5 rounded-full" style={{ width: '100%' }}></div>
+                      </div>
+                    </div>
+                  </div>
+               </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Third Row: Analytics and Rumors */}
+        <div className="lg:col-span-5 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mt-4">
+          
+          {/* Live Track Conditions */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col h-full bg-gradient-to-b from-zinc-900 to-zinc-950 relative overflow-hidden">
+             {/* Background map grid effect */}
+            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
+            
+            <div className="flex items-center gap-3 border-b border-zinc-800 pb-4 mb-4 relative z-10">
+              <div className="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center border border-sky-500/20">
+                <CloudRain className="w-4 h-4 text-sky-500" />
+              </div>
+              <div>
+                <h3 className="text-md font-bold uppercase tracking-widest text-white italic">Track Weather</h3>
+                <p className="text-[10px] text-zinc-400">Live conditions & radar forecast</p>
+              </div>
+            </div>
+            
+            <div className="flex-1 space-y-6 relative z-10">
+               <div className="flex justify-between items-center bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+                  <div className="flex items-center gap-3">
+                    <Thermometer className="w-6 h-6 text-red-500" />
+                    <div>
+                      <span className="block text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Track Temp</span>
+                      <span className="block text-2xl font-black text-white italic">42.5°C</span>
+                    </div>
+                  </div>
+                  <div className="h-10 w-px bg-zinc-800"></div>
+                  <div className="flex items-center gap-3">
+                    <CloudRain className="w-6 h-6 text-sky-500" />
+                    <div>
+                      <span className="block text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Rain Chance</span>
+                      <span className="block text-2xl font-black text-white italic">15%</span>
+                    </div>
+                  </div>
+               </div>
+               
+               <div className="space-y-2">
+                 <div className="flex justify-between text-xs text-zinc-400 font-mono">
+                   <span>Radar Forecast (Next 60m)</span>
+                   <span className="text-sky-500">Light Showers Approach Turn 14</span>
+                 </div>
+                 <div className="h-12 w-full bg-zinc-950 border border-zinc-800 rounded-lg overflow-hidden flex">
+                    <div className="h-full bg-zinc-900 border-r border-zinc-800" style={{ width: '20%' }}></div>
+                    <div className="h-full bg-zinc-900 border-r border-zinc-800 relative" style={{ width: '30%' }}>
+                       <div className="absolute inset-x-0 bottom-0 bg-sky-500/20 h-1/3"></div>
+                    </div>
+                    <div className="h-full bg-sky-500/40 border-r border-zinc-800 relative" style={{ width: '25%' }}>
+                       <div className="absolute inset-x-0 bottom-0 bg-sky-500 h-2/3"></div>
+                    </div>
+                    <div className="h-full bg-zinc-900 relative" style={{ width: '25%' }}>
+                       <div className="absolute inset-x-0 bottom-0 bg-sky-500/20 h-1/4"></div>
+                    </div>
+                 </div>
+                 <div className="flex justify-between text-[9px] text-zinc-600 uppercase font-bold">
+                   <span>Now</span>
+                   <span>+15m</span>
+                   <span>+30m</span>
+                   <span>+45m</span>
+                   <span>+60m</span>
+                 </div>
+               </div>
+            </div>
+          </div>
+
+          {/* Live Sector Timing (Simulated) */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col h-full bg-gradient-to-br from-zinc-900 to-zinc-950">
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-4 mb-4">
+               <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center border border-pink-500/20">
+                  <Activity className="w-4 h-4 text-pink-500" />
+                </div>
+                <div>
+                  <h3 className="text-md font-bold uppercase tracking-widest text-white italic">Live Timing</h3>
+                  <p className="text-[10px] text-zinc-400">Sector analysis (Pro)</p>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded bg-red-600 animate-pulse text-[9px] font-black uppercase tracking-widest text-white">Live</span>
+            </div>
+            
+            <div className="flex-1 space-y-3 font-mono text-xs">
+               <div className="grid grid-cols-5 gap-2 text-[10px] text-zinc-500 uppercase font-bold border-b border-zinc-800 pb-2">
+                 <div className="col-span-2">Driver</div>
+                 <div className="text-center">S1</div>
+                 <div className="text-center">S2</div>
+                 <div className="text-center">S3</div>
+               </div>
+               
+               <div className="grid grid-cols-5 gap-2 items-center bg-zinc-950 p-2 rounded border border-zinc-800">
+                 <div className="col-span-2 font-bold text-white flex items-center gap-2">
+                   <div className="w-1 h-3 bg-blue-500"></div> VER
+                 </div>
+                 <div className="text-center text-purple-400">28.410</div>
+                 <div className="text-center text-green-500">31.295</div>
+                 <div className="text-center text-yellow-500">22.841</div>
+               </div>
+
+               <div className="grid grid-cols-5 gap-2 items-center hover:bg-zinc-800/50 p-2 rounded border border-transparent transition-colors">
+                 <div className="col-span-2 font-bold text-white flex items-center gap-2">
+                   <div className="w-1 h-3 bg-red-600"></div> LEC
+                 </div>
+                 <div className="text-center text-yellow-500">28.530</div>
+                 <div className="text-center text-purple-400">31.182</div>
+                 <div className="text-center text-green-500">22.890</div>
+               </div>
+
+                <div className="grid grid-cols-5 gap-2 items-center hover:bg-zinc-800/50 p-2 rounded border border-transparent transition-colors">
+                 <div className="col-span-2 font-bold text-white flex items-center gap-2">
+                   <div className="w-1 h-3 bg-orange-500"></div> NOR
+                 </div>
+                 <div className="text-center text-green-500">28.455</div>
+                 <div className="text-center text-yellow-500">31.401</div>
+                 <div className="text-center text-purple-400">22.788</div>
+               </div>
+
+                <div className="grid grid-cols-5 gap-2 items-center hover:bg-zinc-800/50 p-2 rounded border border-transparent transition-colors">
+                 <div className="col-span-2 font-bold text-white flex items-center gap-2">
+                   <div className="w-1 h-3 bg-teal-400"></div> RUS
+                 </div>
+                 <div className="text-center text-yellow-500">28.611</div>
+                 <div className="text-center text-yellow-500">31.450</div>
+                 <div className="text-center text-yellow-500">22.955</div>
+               </div>
+            </div>
+          </div>
+
+           {/* Paddock Rumors */}
+           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 flex flex-col h-full md:col-span-2 xl:col-span-1">
+            <div className="flex items-center gap-3 border-b border-zinc-800 pb-4 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
+                <MessageCircle className="w-4 h-4 text-orange-500" />
+              </div>
+              <div>
+                <h3 className="text-md font-bold uppercase tracking-widest text-white italic">Paddock Gossip</h3>
+                <p className="text-[10px] text-zinc-400">Unverified driver market rumors</p>
+              </div>
+            </div>
+            
+            <div className="flex-1 space-y-4">
+               <div className="relative pl-6 border-l-2 border-zinc-800 space-y-6">
+                 
+                 <div className="relative">
+                   <div className="absolute w-3 h-3 bg-orange-500 rounded-full -left-[31px] top-1 border-4 border-zinc-900 shadow-[0_0_10px_rgba(249,115,22,0.5)]"></div>
+                   <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 block">2 Hours Ago</span>
+                   <p className="text-sm text-white italic line-clamp-2">"High-level meetings observed in the Mercedes motorhome. Potential engine supplier negotiations for 2026."</p>
+                 </div>
+
+                  <div className="relative">
+                   <div className="absolute w-3 h-3 bg-zinc-700 rounded-full -left-[31px] top-1 border-4 border-zinc-900"></div>
+                   <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 block">5 Hours Ago</span>
+                   <p className="text-sm text-zinc-300 italic line-clamp-2">"Audi reportedly makes massive multi-year offer to secure leading driver. Decision expected before Monza."</p>
+                 </div>
+
+                  <div className="relative">
+                   <div className="absolute w-3 h-3 bg-zinc-700 rounded-full -left-[31px] top-1 border-4 border-zinc-900"></div>
+                   <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 block">Yesterday</span>
+                   <p className="text-sm text-zinc-300 italic line-clamp-2">"Tension at Red Bull? Whispers of restructuring in the aerodynamic department after wind tunnel discrepancies."</p>
+                 </div>
+               </div>
+            </div>
+             <button className="w-full mt-4 py-3 bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 rounded-xl text-xs font-bold text-white uppercase tracking-widest transition-colors">
+              Read All Rumors
+            </button>
+          </div>
+
         </div>
 
       </div>
