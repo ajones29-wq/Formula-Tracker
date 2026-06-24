@@ -1,14 +1,65 @@
 import { useEffect, useState } from 'react';
 import { getCurrentSchedule } from '../api';
 import { Race } from '../types';
-import { Calendar, MapPin, Clock, ChevronRight } from 'lucide-react';
+import { Calendar, MapPin, Clock, ChevronRight, Globe } from 'lucide-react';
 import { RaceResultsModal } from './RaceResultsModal';
+
+const timeZoneMap: Record<string, string> = {
+  'bahrain': 'Asia/Bahrain',
+  'jeddah': 'Asia/Riyadh',
+  'albert_park': 'Australia/Melbourne',
+  'suzuka': 'Asia/Tokyo',
+  'shanghai': 'Asia/Shanghai',
+  'miami': 'America/New_York',
+  'imola': 'Europe/Rome',
+  'monaco': 'Europe/Monaco',
+  'villeneuve': 'America/Montreal',
+  'catalunya': 'Europe/Madrid',
+  'red_bull_ring': 'Europe/Vienna',
+  'silverstone': 'Europe/London',
+  'spa': 'Europe/Brussels',
+  'hungaroring': 'Europe/Budapest',
+  'zandvoort': 'Europe/Amsterdam',
+  'monza': 'Europe/Rome',
+  'baku': 'Asia/Baku',
+  'marina_bay': 'Asia/Singapore',
+  'americas': 'America/Chicago',
+  'rodriguez': 'America/Mexico_City',
+  'interlagos': 'America/Sao_Paulo',
+  'vegas': 'America/Los_Angeles',
+  'losail': 'Asia/Qatar',
+  'yas_marina': 'Asia/Dubai',
+};
+
+const getRaceSchedule = (race: Race) => {
+  const schedule = [];
+  if (race.FirstPractice) {
+    schedule.push({ name: "Practice 1", time: new Date(`${race.FirstPractice.date}T${race.FirstPractice.time || '00:00:00Z'}`) });
+  }
+  if (race.SecondPractice) {
+    schedule.push({ name: "Practice 2", time: new Date(`${race.SecondPractice.date}T${race.SecondPractice.time || '00:00:00Z'}`) });
+  }
+  if (race.ThirdPractice) {
+    schedule.push({ name: "Practice 3", time: new Date(`${race.ThirdPractice.date}T${race.ThirdPractice.time || '00:00:00Z'}`) });
+  }
+  if (race.Sprint) {
+    schedule.push({ name: "Sprint", time: new Date(`${race.Sprint.date}T${race.Sprint.time || '00:00:00Z'}`) });
+  }
+  if (race.Qualifying) {
+    schedule.push({ name: "Qualifying", time: new Date(`${race.Qualifying.date}T${race.Qualifying.time || '00:00:00Z'}`) });
+  }
+  
+  schedule.push({ name: "Race", time: new Date(`${race.date}T${race.time || '00:00:00Z'}`) });
+  
+  return schedule.sort((a, b) => a.time.getTime() - b.time.getTime());
+};
 
 export function ScheduleView() {
   const [races, setRaces] = useState<Race[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedPastRace, setSelectedPastRace] = useState<Race | null>(null);
+  const [timeZone, setTimeZone] = useState<'track' | 'syd'>('track');
 
   useEffect(() => {
     let mounted = true;
@@ -57,6 +108,39 @@ export function ScheduleView() {
     return raceDate < now;
   }).reverse(); // Most recent past first
 
+  const formatSessionTime = (date: Date, circuitId: string) => {
+    const trackTz = timeZoneMap[circuitId] || 'UTC';
+    return new Intl.DateTimeFormat('en-US', {
+      weekday: 'short',
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: timeZone === 'track' ? trackTz : 'Australia/Sydney',
+    }).format(date);
+  };
+
+  const SessionScheduleDisplay = ({ race }: { race: Race }) => {
+    const schedule = getRaceSchedule(race);
+    if (schedule.length === 0) return null;
+
+    return (
+      <div className="mt-4 pt-4 border-t border-zinc-800/50">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          {schedule.map((session, index) => (
+            <div key={index} className="bg-zinc-950/50 border border-zinc-800/80 rounded-xl p-3 flex flex-col justify-center">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 block mb-1">
+                {session.name}
+              </span>
+              <div className="text-sm font-medium text-zinc-300 flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-zinc-400" />
+                {formatSessionTime(session.time, race.Circuit.circuitId)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const NextRaceCard = ({ race }: { race: Race }) => {
     const raceDate = new Date(`${race.date}T${race.time || '00:00:00Z'}`);
     const isThisWeekend = (raceDate.getTime() - now.getTime()) < 7 * 24 * 60 * 60 * 1000;
@@ -103,33 +187,78 @@ export function ScheduleView() {
               </div>
               
               <div className="flex items-center gap-2 text-zinc-300">
-                <Clock className="w-5 h-5 text-zinc-500" />
-                <span className="font-medium">
-                  {new Intl.DateTimeFormat('en-US', {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    timeZoneName: 'short'
-                  }).format(raceDate)}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 text-zinc-300">
                 <MapPin className="w-5 h-5 text-zinc-500" />
                 <span className="font-medium">
                   {race.Circuit.circuitName}, {race.Circuit.Location.country}
                 </span>
               </div>
             </div>
+            
+            <SessionScheduleDisplay race={race} />
           </div>
         </div>
       </div>
     );
   };
 
-  const RaceList = ({ races, title, isPast }: { races: Race[], title: string, isPast: boolean }) => (
+  const UpcomingRaceList = ({ races }: { races: Race[] }) => (
     <div className="space-y-4">
       <h4 className="text-lg font-bold text-zinc-300 uppercase italic tracking-tight border-b border-zinc-800 pb-2">
-        {title}
+        Upcoming Races
+      </h4>
+      <div className="grid gap-6">
+        {races.map(race => {
+          const raceDate = new Date(`${race.date}T${race.time || '00:00:00Z'}`);
+          
+          return (
+            <div 
+              key={race.round}
+              className="bg-zinc-900/40 border border-zinc-800 rounded-xl p-5 hover:border-zinc-700 transition-colors"
+            >
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                <div>
+                  <div className="text-xs text-zinc-500 font-medium tracking-wider uppercase mb-1">
+                    Round {race.round}
+                  </div>
+                  <h5 className="font-bold text-zinc-100 text-lg line-clamp-1 leading-tight">
+                    {race.raceName}
+                  </h5>
+                </div>
+                
+                <div className="flex items-center gap-4 text-sm text-zinc-400">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-zinc-500" />
+                    <span>
+                      {new Intl.DateTimeFormat('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                      }).format(raceDate)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-zinc-500" />
+                    <span>
+                      {race.Circuit.Location.country}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <SessionScheduleDisplay race={race} />
+            </div>
+          );
+        })}
+      </div>
+      {races.length === 0 && (
+        <p className="text-zinc-500 text-sm italic">No more upcoming races.</p>
+      )}
+    </div>
+  );
+
+  const PastRaceList = ({ races }: { races: Race[] }) => (
+    <div className="space-y-4">
+      <h4 className="text-lg font-bold text-zinc-300 uppercase italic tracking-tight border-b border-zinc-800 pb-2 mt-12">
+        Completed Races
       </h4>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {races.map(race => {
@@ -138,8 +267,8 @@ export function ScheduleView() {
           return (
             <div 
               key={race.round}
-              onClick={() => isPast ? setSelectedPastRace(race) : null}
-              className={`bg-zinc-900/40 border border-zinc-800 rounded-xl p-4 transition-colors relative group ${isPast ? 'cursor-pointer hover:bg-zinc-800/60 hover:border-zinc-600' : 'hover:border-zinc-700'}`}
+              onClick={() => setSelectedPastRace(race)}
+              className="bg-zinc-900/40 border border-zinc-800 rounded-xl p-4 transition-colors relative group cursor-pointer hover:bg-zinc-800/60 hover:border-zinc-600"
             >
               <div className="text-xs text-zinc-500 font-medium tracking-wider uppercase mb-2">
                 Round {race.round}
@@ -166,11 +295,9 @@ export function ScheduleView() {
                 </div>
               </div>
 
-              {isPast && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ChevronRight className="w-6 h-6 text-zinc-400" />
-                </div>
-              )}
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <ChevronRight className="w-6 h-6 text-zinc-400" />
+              </div>
             </div>
           );
         })}
@@ -184,13 +311,38 @@ export function ScheduleView() {
   return (
     <>
       <div className="space-y-8">
+        <div className="flex justify-end mb-4">
+          <div className="flex bg-zinc-950 border border-zinc-800 rounded-lg p-1">
+            <button
+              onClick={() => setTimeZone('track')}
+              className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md flex items-center gap-1.5 transition-colors ${
+                timeZone === 'track' 
+                  ? 'bg-zinc-800 text-white' 
+                  : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              <MapPin className="w-3.5 h-3.5" /> Track Time
+            </button>
+            <button
+              onClick={() => setTimeZone('syd')}
+              className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-md flex items-center gap-1.5 transition-colors ${
+                timeZone === 'syd' 
+                  ? 'bg-zinc-800 text-white' 
+                  : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              <Globe className="w-3.5 h-3.5" /> SYD Time
+            </button>
+          </div>
+        </div>
+
         {upcoming.length > 0 && <NextRaceCard race={upcoming[0]} />}
         
         {upcoming.length > 1 && (
-          <RaceList races={upcoming.slice(1)} title="Upcoming Races" isPast={false} />
+          <UpcomingRaceList races={upcoming.slice(1)} />
         )}
         
-        <RaceList races={past} title="Completed Races" isPast={true} />
+        <PastRaceList races={past} />
       </div>
 
       {selectedPastRace && (
