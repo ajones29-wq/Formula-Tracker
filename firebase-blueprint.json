@@ -1,25 +1,37 @@
 {
-  "collections": [
-    {
-      "name": "users",
-      "fields": [
-        { "name": "email", "type": "string" },
-        { "name": "displayName", "type": "string" },
-        { "name": "photoURL", "type": "string" },
-        { "name": "createdAt", "type": "timestamp" },
-        { "name": "lastLoginAt", "type": "timestamp" }
-      ]
+  "entities": {
+    "userProfile": {
+      "title": "User Profile",
+      "description": "User profile information and preferences",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "email": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "lastLoginAt": { "type": "string", "format": "date-time" }
+      }
     },
-    {
-      "name": "member_posts",
-      "fields": [
-        { "name": "content", "type": "string" },
-        { "name": "authorId", "type": "string" },
-        { "name": "authorName", "type": "string" },
-        { "name": "authorPhoto", "type": "string" },
-        { "name": "createdAt", "type": "timestamp" },
-        { "name": "tag", "type": "string" }
-      ]
+    "appSettings": {
+      "title": "App Settings",
+      "description": "Global application configuration",
+      "type": "object",
+      "properties": {
+        "maintenanceMode": { "type": "boolean" },
+        "announcement": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "updatedBy": { "type": "string" }
+      }
     }
-  ]
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "userProfile",
+      "description": "User profile documents"
+    },
+    "settings/global": {
+      "schema": "appSettings",
+      "description": "Global application settings"
+    }
+  }
 }

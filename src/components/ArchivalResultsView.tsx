@@ -93,7 +93,7 @@ export function ArchivalResultsView() {
     <div className="space-y-6">
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 sm:p-6 mb-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-red-600/10 rounded-lg flex items-center justify-center text-red-500 border border-red-500/20">
+          <div className="w-10 h-10 bg-accent-600/10 rounded-lg flex items-center justify-center text-accent-500 border border-accent-500/20">
             <Archive className="w-5 h-5" />
           </div>
           <div>
@@ -109,7 +109,7 @@ export function ArchivalResultsView() {
               <select 
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(e.target.value)}
-                className="w-full appearance-none bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
+                className="w-full appearance-none bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition-colors"
                 disabled={loadingSchedule}
               >
                 {years.map(year => (
@@ -128,7 +128,7 @@ export function ArchivalResultsView() {
               <select
                 value={selectedRound}
                 onChange={(e) => setSelectedRound(e.target.value)}
-                className="w-full appearance-none bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors disabled:opacity-50"
+                className="w-full appearance-none bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-500 focus:ring-1 focus:ring-accent-500 transition-colors disabled:opacity-50"
                 disabled={loadingSchedule || schedule.length === 0 || activeTab !== 'race'}
               >
                 {schedule.map(raceItem => (
@@ -148,7 +148,7 @@ export function ArchivalResultsView() {
           <button
             onClick={() => setActiveTab('race')}
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
-              activeTab === 'race' ? 'bg-red-600 text-white' : 'text-zinc-500 hover:text-white'
+              activeTab === 'race' ? 'bg-accent-600 text-white' : 'text-zinc-500 hover:text-white'
             }`}
           >
             <Flag className="w-3.5 h-3.5" />
@@ -157,7 +157,7 @@ export function ArchivalResultsView() {
           <button
             onClick={() => setActiveTab('drivers')}
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
-              activeTab === 'drivers' ? 'bg-red-600 text-white' : 'text-zinc-500 hover:text-white'
+              activeTab === 'drivers' ? 'bg-accent-600 text-white' : 'text-zinc-500 hover:text-white'
             }`}
           >
             <Trophy className="w-3.5 h-3.5" />
@@ -166,7 +166,7 @@ export function ArchivalResultsView() {
           <button
             onClick={() => setActiveTab('constructors')}
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-md transition-colors ${
-              activeTab === 'constructors' ? 'bg-red-600 text-white' : 'text-zinc-500 hover:text-white'
+              activeTab === 'constructors' ? 'bg-accent-600 text-white' : 'text-zinc-500 hover:text-white'
             }`}
           >
             <Users className="w-3.5 h-3.5" />
@@ -176,20 +176,20 @@ export function ArchivalResultsView() {
       </div>
 
       {error ? (
-        <div className="p-4 bg-red-950/30 text-red-400 rounded-lg border border-red-900/50 flex flex-col items-center justify-center min-h-[200px] gap-3">
+        <div className="p-4 bg-accent-950/30 text-accent-400 rounded-lg border border-accent-900/50 flex flex-col items-center justify-center min-h-[200px] gap-3">
           <AlertCircle className="w-8 h-8 opacity-50" />
           <p>{error}</p>
         </div>
       ) : activeTab === 'race' ? (
         loadingRace ? (
           <div className="flex items-center justify-center p-12 min-h-[300px]">
-            <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-accent-600 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : race ? (
           <>
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-zinc-800 pb-4">
               <div>
-                <p className="text-red-500 font-medium tracking-wide uppercase text-sm mb-1">
+                <p className="text-accent-500 font-medium tracking-wide uppercase text-sm mb-1">
                   Round {race.round} — {selectedYear} Season
                 </p>
                 <h2 className="text-3xl font-extrabold italic tracking-tight text-white uppercase">
@@ -240,7 +240,7 @@ export function ArchivalResultsView() {
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
-                              <div className="h-6 w-1 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                              <div className="h-6 w-1 bg-accent-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                               <div>
                                 <p className="font-semibold text-zinc-100">
                                   <button 
@@ -276,7 +276,7 @@ export function ArchivalResultsView() {
                               </span>
                             ) : (
                               <span className="text-zinc-500 flex items-center justify-end gap-1.5 text-xs uppercase tracking-wider">
-                                {!isFinished && <AlertCircle className="w-3.5 h-3.5 text-red-400/70" />}
+                                {!isFinished && <AlertCircle className="w-3.5 h-3.5 text-accent-400/70" />}
                                 {result.status}
                               </span>
                             )}
@@ -307,7 +307,7 @@ export function ArchivalResultsView() {
       ) : activeTab === 'drivers' || activeTab === 'constructors' ? (
         loadingStandings ? (
           <div className="flex items-center justify-center p-12 min-h-[300px]">
-            <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-accent-600 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
           <div className="bg-zinc-900/50 rounded-xl border border-zinc-800 overflow-hidden backdrop-blur-sm">
@@ -343,7 +343,7 @@ export function ArchivalResultsView() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
-                            <div className="h-6 w-1 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div className="h-6 w-1 bg-accent-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             <div>
                               <p className="font-semibold text-zinc-100">
                                 <button 
@@ -402,7 +402,7 @@ export function ArchivalResultsView() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
-                            <div className="h-6 w-1 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div className="h-6 w-1 bg-accent-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             <div>
                               <p className="font-semibold text-zinc-100 text-lg">
                                 <button 

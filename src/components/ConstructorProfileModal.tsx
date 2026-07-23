@@ -56,7 +56,7 @@ export function ConstructorProfileModal({ constructorData: team, onClose }: Cons
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-zinc-800/80 bg-zinc-900/30 rounded-t-2xl">
           <div className="flex gap-4 items-center">
-            <div className="w-16 h-16 bg-red-600/10 rounded-full flex items-center justify-center border border-red-500/20 text-red-500">
+            <div className="w-16 h-16 bg-accent-600/10 rounded-full flex items-center justify-center border border-accent-500/20 text-accent-500">
               <Users className="w-8 h-8" />
             </div>
             <div>

@@ -15,20 +15,11 @@ export function GlobalSearch({ isOpen, onClose }: { isOpen: boolean; onClose: ()
     }
   }, [isOpen]);
 
-  // Close on escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-    }
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [query]);
 
   // Mock search results based on query
   const getResults = () => {
@@ -124,6 +115,41 @@ export function GlobalSearch({ isOpen, onClose }: { isOpen: boolean; onClose: ()
 
   const results = getResults();
 
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      
+      if (!isOpen || results.length === 0) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedIndex((prev) => (prev + 1) % results.length);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedIndex((prev) => (prev - 1 + results.length) % results.length);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const selected = results[selectedIndex];
+        if (selected) {
+          setToastMessage(`Navigating to ${selected.type}: ${selected.name}`);
+          setTimeout(() => {
+            setToastMessage(null);
+            onClose();
+          }, 1500);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose, results, selectedIndex]);
+
+  if (!isOpen) return null;
+
   const getIcon = (type: string) => {
     switch (type) {
       case 'driver': return <UserIcon className="w-4 h-4 text-emerald-500" />;
@@ -197,7 +223,10 @@ export function GlobalSearch({ isOpen, onClose }: { isOpen: boolean; onClose: ()
                           onClose();
                         }, 1500);
                       }}
-                      className="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-zinc-800 transition-colors text-left group"
+                      onMouseEnter={() => setSelectedIndex(idx)}
+                      className={`w-full flex items-center gap-4 p-3 rounded-xl transition-colors text-left group ${
+                        idx === selectedIndex ? 'bg-zinc-800' : 'hover:bg-zinc-800'
+                      }`}
                     >
                       <div className="w-10 h-10 rounded-lg bg-zinc-950 flex items-center justify-center flex-shrink-0 border border-zinc-800">
                         {getIcon(result.type)}

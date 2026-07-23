@@ -1,23 +1,46 @@
 import { useEffect, useState } from 'react';
-import { Flag, LogOut, LogIn, Search } from 'lucide-react';
+import { Flag, LogOut, LogIn, Search, Settings } from 'lucide-react';
 import { initFirebase, signInWithGoogle, logout } from '../lib/firebase';
 import { User } from 'firebase/auth';
 import { GlobalSearch } from './GlobalSearch';
 
-export function Header() {
+export function Header({ onAdminClick, onProfileClick }: { onAdminClick?: () => void, onProfileClick?: () => void }) {
   const [user, setUser] = useState<User | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [siteTitle, setSiteTitle] = useState('Formula Tracker');
+  const [enableSearch, setEnableSearch] = useState(true);
 
   useEffect(() => {
     let unsubscribe: () => void;
+    let authInstance: any;
     initFirebase().then(({ auth }) => {
+      authInstance = auth;
       unsubscribe = auth.onAuthStateChanged((user) => {
         setUser(user);
       });
     }).catch(console.error);
     
+    const handleProfileUpdate = () => {
+      if (authInstance && authInstance.currentUser) {
+        setUser({ ...authInstance.currentUser });
+      }
+    };
+    window.addEventListener('profile-updated', handleProfileUpdate);
+    
+    const loadSettings = () => {
+      const savedTitle = localStorage.getItem('app-site-title');
+      if (savedTitle) setSiteTitle(savedTitle);
+      
+      const search = localStorage.getItem('app-enable-search');
+      if (search !== null) setEnableSearch(search === 'true');
+    };
+    
+    loadSettings();
+    window.addEventListener('app-settings-changed', loadSettings);
+    
     // Global keyboard shortcut for search (Cmd/Ctrl + K pattern)
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!enableSearch) return;
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setIsSearchOpen(true);
@@ -28,8 +51,10 @@ export function Header() {
     return () => {
       if (unsubscribe) unsubscribe();
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('app-settings-changed', loadSettings);
+      window.removeEventListener('profile-updated', handleProfileUpdate);
     };
-  }, []);
+  }, [enableSearch]);
 
   return (
     <>
@@ -37,23 +62,25 @@ export function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-accent-600 rounded-lg flex items-center justify-center">
                 <Flag className="w-5 h-5 text-white" />
               </div>
               <h1 className="text-xl font-bold tracking-tight text-white uppercase italic hidden sm:block">
-                Formula Tracker
+                {siteTitle}
               </h1>
             </div>
             <div className="flex items-center gap-3 sm:gap-4">
-              <button
-                onClick={() => setIsSearchOpen(true)}
-                className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-zinc-700 transition-colors"
-                title="Search (Cmd/Ctrl + K)"
-              >
-                <Search className="w-4 h-4" />
-                <span className="text-xs font-bold uppercase tracking-wider hidden md:inline-block">Search...</span>
-                <kbd className="hidden lg:inline-flex items-center h-5 px-1.5 ml-2 text-[10px] font-mono rounded bg-zinc-800 border border-zinc-700 text-zinc-500">⌘K</kbd>
-              </button>
+              {enableSearch && (
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-zinc-700 transition-colors"
+                  title="Search (Cmd/Ctrl + K)"
+                >
+                  <Search className="w-4 h-4" />
+                  <span className="text-xs font-bold uppercase tracking-wider hidden md:inline-block">Search...</span>
+                  <kbd className="hidden lg:inline-flex items-center h-5 px-1.5 ml-2 text-[10px] font-mono rounded bg-zinc-800 border border-zinc-700 text-zinc-500">⌘K</kbd>
+                </button>
+              )}
               
               <div className="w-px h-6 bg-zinc-800 hidden sm:block"></div>
 
@@ -64,11 +91,13 @@ export function Header() {
               
               {user ? (
                 <div className="flex items-center gap-3">
-                  <img 
-                    src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email || 'User')}`} 
-                    alt="Profile" 
-                    className="w-8 h-8 rounded-full border border-zinc-800"
-                  />
+                  <button onClick={onProfileClick} className="focus:outline-none focus:ring-2 focus:ring-accent-500 rounded-full transition-transform hover:scale-105">
+                    <img 
+                      src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email || 'User')}`} 
+                      alt="Profile" 
+                      className="w-8 h-8 rounded-full border border-zinc-800"
+                    />
+                  </button>
                   <button 
                     onClick={logout}
                     className="text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5 bg-zinc-900/50 hover:bg-zinc-800 px-3 py-1.5 rounded-lg border border-zinc-800"
@@ -91,7 +120,7 @@ export function Header() {
         </div>
       </header>
 
-      <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      {enableSearch && <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />}
     </>
   );
 }

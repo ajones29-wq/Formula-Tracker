@@ -48,7 +48,7 @@ export function AIPredictorView() {
       <div className="flex-1 overflow-y-auto mb-4 space-y-6 pr-2 no-scrollbar">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-zinc-500 space-y-4">
-            <div className="w-16 h-16 bg-red-600/10 rounded-full flex items-center justify-center text-red-500 border border-red-500/20">
+            <div className="w-16 h-16 bg-accent-600/10 rounded-full flex items-center justify-center text-accent-500 border border-accent-500/20">
               <Bot className="w-8 h-8" />
             </div>
             <h2 className="text-xl font-bold uppercase tracking-widest text-zinc-300 text-center">F1 AI Strategist</h2>
@@ -61,7 +61,7 @@ export function AIPredictorView() {
         {messages.map((msg, idx) => (
           <div key={idx} className={`flex gap-4 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'ai' && (
-              <div className="w-8 h-8 rounded bg-red-600 flex items-center justify-center text-white shrink-0">
+              <div className="w-8 h-8 rounded bg-accent-600 flex items-center justify-center text-white shrink-0">
                 <Bot className="w-5 h-5" />
               </div>
             )}
@@ -82,11 +82,11 @@ export function AIPredictorView() {
         ))}
         {loading && (
           <div className="flex gap-4 justify-start">
-            <div className="w-8 h-8 rounded bg-red-600 flex items-center justify-center text-white shrink-0">
+            <div className="w-8 h-8 rounded bg-accent-600 flex items-center justify-center text-white shrink-0">
               <Bot className="w-5 h-5" />
             </div>
             <div className="px-4 py-3 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-300 rounded-tl-none flex items-center">
-              <Loader2 className="w-5 h-5 animate-spin text-red-500" />
+              <Loader2 className="w-5 h-5 animate-spin text-accent-500" />
               <span className="ml-3 text-sm text-zinc-500 italic">Thinking...</span>
             </div>
           </div>
@@ -106,7 +106,7 @@ export function AIPredictorView() {
           <button
             type="submit"
             disabled={!prompt.trim() || loading}
-            className="p-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-3 bg-accent-600 text-white rounded-xl hover:bg-accent-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send className="w-5 h-5" />
           </button>

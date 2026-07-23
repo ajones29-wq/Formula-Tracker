@@ -44,14 +44,14 @@ export function StandingsView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-accent-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-950/30 text-red-400 rounded-lg border border-red-900/50">
+      <div className="p-4 bg-accent-950/30 text-accent-400 rounded-lg border border-accent-900/50">
         Failed to load standings: {error}
       </div>
     );
@@ -69,7 +69,7 @@ export function StandingsView() {
           <button
             onClick={() => setType('drivers')}
             className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold uppercase tracking-wider rounded-md transition-colors ${
-              type === 'drivers' ? 'bg-red-600 text-white' : 'text-zinc-500 hover:text-white'
+              type === 'drivers' ? 'bg-accent-600 text-white' : 'text-zinc-500 hover:text-white'
             }`}
           >
             <User className="w-4 h-4" />
@@ -78,7 +78,7 @@ export function StandingsView() {
           <button
             onClick={() => setType('constructors')}
             className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold uppercase tracking-wider rounded-md transition-colors ${
-              type === 'constructors' ? 'bg-red-600 text-white' : 'text-zinc-500 hover:text-white'
+              type === 'constructors' ? 'bg-accent-600 text-white' : 'text-zinc-500 hover:text-white'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -120,7 +120,7 @@ export function StandingsView() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-6 w-1 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div className="h-6 w-1 bg-accent-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div>
                           <p className="font-semibold text-zinc-100">
                             <button 
@@ -179,7 +179,7 @@ export function StandingsView() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-6 w-1 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div className="h-6 w-1 bg-accent-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div>
                           <p className="font-semibold text-zinc-100 text-lg">
                             <button 

@@ -54,7 +54,7 @@ export function RaceResultsModal({ race, onClose }: RaceResultsModalProps) {
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-zinc-800/80 bg-zinc-900/30 rounded-t-2xl shrink-0">
           <div>
-            <p className="text-red-500 font-bold tracking-widest uppercase text-xs mb-1.5 flex items-center gap-2">
+            <p className="text-accent-500 font-bold tracking-widest uppercase text-xs mb-1.5 flex items-center gap-2">
               <Trophy className="w-3.5 h-3.5" />
               Round {race.round} Results
             </p>
@@ -87,11 +87,11 @@ export function RaceResultsModal({ race, onClose }: RaceResultsModalProps) {
           <div className="p-6">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 gap-4">
-                <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-8 h-8 border-4 border-accent-600 border-t-transparent rounded-full animate-spin"></div>
                 <p className="text-zinc-500 text-sm font-medium tracking-wider uppercase">Loading Results</p>
               </div>
             ) : error || !raceResults || !raceResults.Results ? (
-              <div className="flex flex-col items-center justify-center py-12 gap-3 text-red-400 bg-red-950/20 rounded-xl border border-red-900/30">
+              <div className="flex flex-col items-center justify-center py-12 gap-3 text-accent-400 bg-accent-950/20 rounded-xl border border-accent-900/30">
                 <AlertCircle className="w-8 h-8 opacity-50" />
                 <p>Failed to load race results: {error || 'No results available yet'}</p>
               </div>
@@ -130,7 +130,7 @@ export function RaceResultsModal({ race, onClose }: RaceResultsModalProps) {
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
-                              <div className="h-6 w-1 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                              <div className="h-6 w-1 bg-accent-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                               <div>
                                 <p className="font-semibold text-zinc-100">
                                   <button 
@@ -166,7 +166,7 @@ export function RaceResultsModal({ race, onClose }: RaceResultsModalProps) {
                               </span>
                             ) : (
                               <span className="text-zinc-500 flex items-center justify-end gap-1.5 text-xs uppercase tracking-wider">
-                                {!isFinished && <AlertCircle className="w-3.5 h-3.5 text-red-400/70" />}
+                                {!isFinished && <AlertCircle className="w-3.5 h-3.5 text-accent-400/70" />}
                                 {result.status}
                               </span>
                             )}

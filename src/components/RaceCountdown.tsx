@@ -119,15 +119,15 @@ export function RaceCountdown() {
 
   return (
     <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-2xl p-4 sm:p-6 mb-8 flex flex-col relative overflow-hidden group">
-      <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-accent-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
       
       <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-6">
         <div className="flex items-center gap-6 relative z-10 w-full md:w-auto">
           <div className="w-16 h-16 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-center flex-shrink-0">
-            <Flag className="w-8 h-8 text-red-500" />
+            <Flag className="w-8 h-8 text-accent-500" />
           </div>
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-red-500 mb-1 block">Next Race Countdown</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-accent-500 mb-1 block">Next Race Countdown</span>
             <h2 className="text-xl sm:text-2xl font-black text-white italic tracking-tight">{nextRace.raceName}</h2>
             <div className="flex items-center gap-3 mt-2 text-sm text-zinc-400">
               <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" /> {nextRace.Circuit.circuitName}, {nextRace.Circuit.Location.country}</span>
@@ -155,7 +155,7 @@ export function RaceCountdown() {
             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mt-2">Mins</span>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-16 sm:w-20 h-16 sm:h-20 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-center text-2xl sm:text-3xl font-black italic text-red-500 shadow-inner">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-center text-2xl sm:text-3xl font-black italic text-accent-500 shadow-inner">
               {timeLeft.seconds.toString().padStart(2, '0')}
             </div>
             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mt-2">Secs</span>

@@ -82,14 +82,14 @@ export function ScheduleView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-accent-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 bg-red-950/30 text-red-400 rounded-lg border border-red-900/50">
+      <div className="p-4 bg-accent-950/30 text-accent-400 rounded-lg border border-accent-900/50">
         Failed to load schedule: {error}
       </div>
     );
@@ -146,19 +146,19 @@ export function ScheduleView() {
     const isThisWeekend = (raceDate.getTime() - now.getTime()) < 7 * 24 * 60 * 60 * 1000;
 
     return (
-      <div className="mb-8 relative overflow-hidden rounded-2xl border border-red-900/40 bg-gradient-to-br from-red-950/40 to-zinc-950 p-6 sm:p-8">
+      <div className="mb-8 relative overflow-hidden rounded-2xl border border-accent-900/40 bg-gradient-to-br from-accent-950/40 to-zinc-950 p-6 sm:p-8">
         <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
           <Calendar className="w-48 h-48" />
         </div>
         
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-6">
-            <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+            <span className="bg-accent-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">
               Next Race
             </span>
             {isThisWeekend && (
-              <span className="flex items-center gap-2 text-xs font-medium text-red-400">
-                <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+              <span className="flex items-center gap-2 text-xs font-medium text-accent-400">
+                <span className="w-1.5 h-1.5 bg-accent-500 rounded-full animate-pulse"></span>
                 Race Week
               </span>
             )}
@@ -166,7 +166,7 @@ export function ScheduleView() {
 
           <div className="space-y-4">
             <div>
-              <p className="text-red-500 font-medium tracking-wide uppercase text-sm mb-1">
+              <p className="text-accent-500 font-medium tracking-wide uppercase text-sm mb-1">
                 Round {race.round}
               </p>
               <h3 className="text-3xl sm:text-4xl font-extrabold italic text-white uppercase tracking-tight">

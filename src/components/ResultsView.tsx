@@ -33,14 +33,14 @@ export function ResultsView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-accent-600 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (error || !race) {
     return (
-      <div className="p-4 bg-red-950/30 text-red-400 rounded-lg border border-red-900/50 flex flex-col items-center justify-center min-h-[200px] gap-3">
+      <div className="p-4 bg-accent-950/30 text-accent-400 rounded-lg border border-accent-900/50 flex flex-col items-center justify-center min-h-[200px] gap-3">
         <AlertCircle className="w-8 h-8 opacity-50" />
         <p>Failed to load latest race results. {error}</p>
       </div>
@@ -51,7 +51,7 @@ export function ResultsView() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-zinc-800 pb-4">
         <div>
-          <p className="text-red-500 font-medium tracking-wide uppercase text-sm mb-1">
+          <p className="text-accent-500 font-medium tracking-wide uppercase text-sm mb-1">
             Latest Result — Round {race.round}
           </p>
           <h2 className="text-3xl font-extrabold italic tracking-tight text-white uppercase">
@@ -102,7 +102,7 @@ export function ResultsView() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-6 w-1 bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div className="h-6 w-1 bg-accent-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div>
                           <p className="font-semibold text-zinc-100">
                             <button 
@@ -138,7 +138,7 @@ export function ResultsView() {
                         </span>
                       ) : (
                         <span className="text-zinc-500 flex items-center justify-end gap-1.5 text-xs uppercase tracking-wider">
-                          {!isFinished && <AlertCircle className="w-3.5 h-3.5 text-red-400/70" />}
+                          {!isFinished && <AlertCircle className="w-3.5 h-3.5 text-accent-400/70" />}
                           {result.status}
                         </span>
                       )}
