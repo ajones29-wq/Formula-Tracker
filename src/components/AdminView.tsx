@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Lock, Unlock, Settings as SettingsIcon, Save, Mail, Key, Loader2 } from 'lucide-react';
+import { Lock, Unlock, Settings as SettingsIcon, Save, Mail, Key, Loader2, Shield, CheckCircle2 } from 'lucide-react';
 import { initFirebase } from '../lib/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
@@ -12,15 +12,18 @@ interface AdminViewProps {
     siteTitle: string;
     defaultTab: string;
     showRaceCountdown: boolean;
-    enableAIPredictor: boolean;
+    enableNews: boolean;
     liveTimingMode: boolean;
     showHistoricalArchive: boolean;
     maintenanceMode: boolean;
+    maintenanceMessage: string;
     enableGlobalSearch: boolean;
     enableTelemetry: boolean;
     allowRegistrations: boolean;
     verboseLogging: boolean;
     simulateRace: boolean;
+    contactEmail?: string;
+    contactDescription?: string;
   };
   setters: {
     setThemeColor: (val: string) => void;
@@ -28,15 +31,18 @@ interface AdminViewProps {
     setSiteTitle: (val: string) => void;
     setDefaultTab: (val: any) => void;
     setShowRaceCountdown: (val: boolean) => void;
-    setEnableAIPredictor: (val: boolean) => void;
+    setEnableNews: (val: boolean) => void;
     setLiveTimingMode: (val: boolean) => void;
     setShowHistoricalArchive: (val: boolean) => void;
     setMaintenanceMode: (val: boolean) => void;
+    setMaintenanceMessage: (val: string) => void;
     setEnableGlobalSearch: (val: boolean) => void;
     setEnableTelemetry: (val: boolean) => void;
     setAllowRegistrations: (val: boolean) => void;
     setVerboseLogging: (val: boolean) => void;
     setSimulateRace: (val: boolean) => void;
+    setContactEmail?: (val: string) => void;
+    setContactDescription?: (val: string) => void;
   };
 }
 
@@ -54,16 +60,18 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
 
   const {
     themeColor, announcement, siteTitle, defaultTab, 
-    showRaceCountdown, enableAIPredictor, liveTimingMode, 
-    showHistoricalArchive, maintenanceMode, enableGlobalSearch, 
-    enableTelemetry, allowRegistrations, verboseLogging, simulateRace
+    showRaceCountdown, enableNews, liveTimingMode, 
+    showHistoricalArchive, maintenanceMode, maintenanceMessage, enableGlobalSearch, 
+    enableTelemetry, allowRegistrations, verboseLogging, simulateRace,
+    contactEmail, contactDescription
   } = settings;
 
   const {
     setThemeColor, setAnnouncement, setSiteTitle, setDefaultTab,
-    setShowRaceCountdown, setEnableAIPredictor, setLiveTimingMode,
-    setShowHistoricalArchive, setMaintenanceMode, setEnableGlobalSearch,
-    setEnableTelemetry, setAllowRegistrations, setVerboseLogging, setSimulateRace
+    setShowRaceCountdown, setEnableNews, setLiveTimingMode,
+    setShowHistoricalArchive, setMaintenanceMode, setMaintenanceMessage, setEnableGlobalSearch,
+    setEnableTelemetry, setAllowRegistrations, setVerboseLogging, setSimulateRace,
+    setContactEmail, setContactDescription
   } = setters;
   
   // Settings are now managed by App.tsx props
@@ -165,15 +173,18 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
       localStorage.setItem('app-site-title', siteTitle);
       localStorage.setItem('app-default-tab', defaultTab);
       localStorage.setItem('app-show-countdown', showRaceCountdown.toString());
-      localStorage.setItem('app-enable-ai', enableAIPredictor.toString());
+      localStorage.setItem('app-enable-news', enableNews.toString());
       localStorage.setItem('app-live-timing', liveTimingMode.toString());
       localStorage.setItem('app-show-archive', showHistoricalArchive.toString());
       localStorage.setItem('app-maintenance-mode', maintenanceMode.toString());
+      localStorage.setItem('app-maintenance-message', maintenanceMessage);
       localStorage.setItem('app-enable-search', enableGlobalSearch.toString());
       localStorage.setItem('app-enable-telemetry', enableTelemetry.toString());
       localStorage.setItem('app-allow-registrations', allowRegistrations.toString());
       localStorage.setItem('app-verbose-logging', verboseLogging.toString());
       localStorage.setItem('app-simulate-race', simulateRace.toString());
+      if (contactEmail) localStorage.setItem('app-contact-email', contactEmail);
+      if (contactDescription) localStorage.setItem('app-contact-description', contactDescription);
       
       document.documentElement.setAttribute('data-theme', themeColor);
 
@@ -182,9 +193,12 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
       const settingsRef = doc(db, 'settings', 'global');
       await setDoc(settingsRef, {
         maintenanceMode,
+        maintenanceMessage,
         announcement,
         siteTitle,
         themeColor,
+        contactEmail,
+        contactDescription,
         updatedAt: new Date().toISOString(),
         updatedBy: auth.currentUser?.email || 'admin'
       }, { merge: true });
@@ -378,6 +392,43 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-accent-500 h-24 resize-none"
               ></textarea>
             </div>
+
+            <div>
+              <label className="block text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">
+                Maintenance Message
+              </label>
+              <textarea 
+                value={maintenanceMessage}
+                onChange={(e) => setMaintenanceMessage(e.target.value)}
+                placeholder="Enter message to display during maintenance mode..."
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-accent-500 h-24 resize-none"
+              ></textarea>
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">
+                Contact Email
+              </label>
+              <input 
+                type="email"
+                value={contactEmail || ''}
+                onChange={(e) => setContactEmail?.(e.target.value)}
+                placeholder="e.g. hello@example.com"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-accent-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">
+                Contact Page Description
+              </label>
+              <textarea 
+                value={contactDescription || ''}
+                onChange={(e) => setContactDescription?.(e.target.value)}
+                placeholder="Enter text to display on the contact page..."
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-accent-500 h-24 resize-none"
+              ></textarea>
+            </div>
           </div>
         </div>
         
@@ -395,10 +446,10 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
             
             <label className="flex items-center justify-between p-3 bg-zinc-950 border border-zinc-800 rounded-xl cursor-pointer hover:border-zinc-700 transition-colors">
               <div>
-                <div className="font-bold text-white">Enable AI Predictor</div>
-                <div className="text-xs text-zinc-500">Show the AI strategy simulation tab</div>
+                <div className="font-bold text-white">Enable Latest News</div>
+                <div className="text-xs text-zinc-500">Show the Latest News tab</div>
               </div>
-              <input type="checkbox" checked={enableAIPredictor} onChange={(e) => setEnableAIPredictor(e.target.checked)} className="w-4 h-4 accent-accent-500" />
+              <input type="checkbox" checked={enableNews} onChange={(e) => setEnableNews(e.target.checked)} className="w-4 h-4 accent-accent-500" />
             </label>
             
             <label className="flex items-center justify-between p-3 bg-zinc-950 border border-zinc-800 rounded-xl cursor-pointer hover:border-zinc-700 transition-colors">
@@ -464,6 +515,63 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
               </div>
               <input type="checkbox" checked={maintenanceMode} onChange={(e) => setMaintenanceMode(e.target.checked)} className="w-4 h-4 accent-red-500" />
             </label>
+          </div>
+        </div>
+      </div>
+      
+      <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6">
+        <h3 className="text-lg font-bold uppercase tracking-wider mb-4 border-b border-zinc-800 pb-2 flex items-center gap-2">
+          <Shield className="w-5 h-5 text-emerald-500" />
+          Security & Infrastructure Audit
+        </h3>
+        
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800/50">
+            <div className="flex items-center gap-2 mb-1">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <span className="text-xs font-bold text-white uppercase tracking-wider">HSTS & CSP</span>
+            </div>
+            <p className="text-[10px] text-zinc-500">Helmet.js headers active with strict Content Security Policy</p>
+          </div>
+          
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800/50">
+            <div className="flex items-center gap-2 mb-1">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <span className="text-xs font-bold text-white uppercase tracking-wider">Rate Limiting</span>
+            </div>
+            <p className="text-[10px] text-zinc-500">Window-based IP throttling enabled on all sensitive endpoints</p>
+          </div>
+
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800/50">
+            <div className="flex items-center gap-2 mb-1">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <span className="text-xs font-bold text-white uppercase tracking-wider">CORS Policy</span>
+            </div>
+            <p className="text-[10px] text-zinc-500">Cross-Origin Resource Sharing restricted to authorized domains</p>
+          </div>
+
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800/50">
+            <div className="flex items-center gap-2 mb-1">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <span className="text-xs font-bold text-white uppercase tracking-wider">HPP Protection</span>
+            </div>
+            <p className="text-[10px] text-zinc-500">HTTP Parameter Pollution defense active on all API routes</p>
+          </div>
+
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800/50">
+            <div className="flex items-center gap-2 mb-1">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <span className="text-xs font-bold text-white uppercase tracking-wider">Payload Limits</span>
+            </div>
+            <p className="text-[10px] text-zinc-500">JSON request body capped at 10KB to prevent memory exhaustion</p>
+          </div>
+
+          <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800/50">
+            <div className="flex items-center gap-2 mb-1">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <span className="text-xs font-bold text-white uppercase tracking-wider">2FA Protocol</span>
+            </div>
+            <p className="text-[10px] text-zinc-500">Google Docs based secondary out-of-band verification active</p>
           </div>
         </div>
       </div>

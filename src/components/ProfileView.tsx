@@ -114,10 +114,17 @@ export function ProfileView() {
         updatedAt: new Date().toISOString()
       }, { merge: true });
       
-      await updateProfile(user, {
-        displayName: formData.displayName,
-        photoURL: formData.photoURL
-      });
+      const authUpdate: { displayName?: string; photoURL?: string } = {
+        displayName: formData.displayName
+      };
+      
+      // Only update photoURL in Firebase Auth if it's a standard URL and not too long
+      // Base64 data URLs are saved to Firestore but usually exceed Auth's 2048 char limit
+      if (formData.photoURL && !formData.photoURL.startsWith('data:') && formData.photoURL.length <= 2000) {
+        authUpdate.photoURL = formData.photoURL;
+      }
+      
+      await updateProfile(user, authUpdate);
       window.dispatchEvent(new Event('profile-updated'));
 
       setSuccess(true);

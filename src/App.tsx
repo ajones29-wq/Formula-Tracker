@@ -8,17 +8,18 @@ import { Header } from './components/Header';
 import { ScheduleView } from './components/ScheduleView';
 import { StandingsView } from './components/StandingsView';
 import { ResultsView } from './components/ResultsView';
-import { AIPredictorView } from './components/AIPredictorView';
+import { NewsView } from './components/NewsView';
 import { ProfileView } from './components/ProfileView';
 import { ArchivalResultsView } from './components/ArchivalResultsView';
 import { AdminView } from './components/AdminView';
 import { ContactView } from './components/ContactView';
+import { QuickLinksView } from './components/QuickLinksView';
 import { RaceCountdown } from './components/RaceCountdown';
-import { Calendar, Trophy, Timer, Bot, User as UserIcon, Archive, Award, ChevronDown, ExternalLink, Settings, Mail } from 'lucide-react';
+import { Calendar, Trophy, Timer, Newspaper, Bot, User as UserIcon, Archive, Award, ChevronDown, ExternalLink, Settings, Mail, Globe, MonitorPlay, Link } from 'lucide-react';
 import { initFirebase } from './lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 
-type Tab = 'standings' | 'results' | 'archive' | 'admin' | 'schedule' | 'ai' | 'profile' | 'contact';
+type Tab = 'standings' | 'results' | 'archive' | 'admin' | 'schedule' | 'news' | 'profile' | 'contact' | 'quick-links';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab | null>(null);
@@ -29,16 +30,19 @@ export default function App() {
   const [themeColor, setThemeColor] = useState('red');
   const [siteTitle, setSiteTitle] = useState('F1 2026 Season');
   const [defaultTab, setDefaultTab] = useState<Tab>('standings');
-  const [enableAIPredictor, setEnableAIPredictor] = useState(true);
+  const [enableNews, setEnableNews] = useState(true);
   const [showHistoricalArchive, setShowHistoricalArchive] = useState(true);
   const [showRaceCountdown, setShowRaceCountdown] = useState(true);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [maintenanceMessage, setMaintenanceMessage] = useState('We are currently updating our systems. Please check back later for the latest racing data.');
   const [liveTimingMode, setLiveTimingMode] = useState(true);
   const [enableGlobalSearch, setEnableGlobalSearch] = useState(true);
   const [enableTelemetry, setEnableTelemetry] = useState(true);
   const [allowRegistrations, setAllowRegistrations] = useState(false);
   const [verboseLogging, setVerboseLogging] = useState(false);
   const [simulateRace, setSimulateRace] = useState(false);
+  const [contactEmail, setContactEmail] = useState('ajones29@erc.nsw.edu.au');
+  const [contactDescription, setContactDescription] = useState('Have questions about the 2026 season or feedback for the tracker? I\'d love to hear from you.');
 
   // Initialize theme from localStorage
   useEffect(() => {
@@ -50,8 +54,8 @@ export default function App() {
       setAnnouncement(localStorage.getItem('app-announcement') || '');
       setSiteTitle(localStorage.getItem('app-site-title') || 'F1 2026 Season');
       
-      const savedAI = localStorage.getItem('app-enable-ai');
-      if (savedAI !== null) setEnableAIPredictor(savedAI === 'true');
+      const savedNews = localStorage.getItem('app-enable-news');
+      if (savedNews !== null) setEnableNews(savedNews === 'true');
       
       const savedArchive = localStorage.getItem('app-show-archive');
       if (savedArchive !== null) setShowHistoricalArchive(savedArchive === 'true');
@@ -61,6 +65,9 @@ export default function App() {
       
       const savedMaintenance = localStorage.getItem('app-maintenance-mode');
       if (savedMaintenance !== null) setMaintenanceMode(savedMaintenance === 'true');
+      
+      const savedMaintenanceMsg = localStorage.getItem('app-maintenance-message');
+      if (savedMaintenanceMsg !== null) setMaintenanceMessage(savedMaintenanceMsg);
       
       const savedTiming = localStorage.getItem('app-live-timing');
       if (savedTiming !== null) setLiveTimingMode(savedTiming === 'true');
@@ -80,6 +87,12 @@ export default function App() {
       const savedSimulate = localStorage.getItem('app-simulate-race');
       if (savedSimulate !== null) setSimulateRace(savedSimulate === 'true');
 
+      const savedContactEmail = localStorage.getItem('app-contact-email');
+      if (savedContactEmail !== null) setContactEmail(savedContactEmail);
+
+      const savedContactDesc = localStorage.getItem('app-contact-description');
+      if (savedContactDesc !== null) setContactDescription(savedContactDesc);
+
       const savedDefaultTab = localStorage.getItem('app-default-tab') as Tab || 'standings';
       setDefaultTab(savedDefaultTab);
       setActiveTab((prev) => prev || savedDefaultTab);
@@ -96,7 +109,10 @@ export default function App() {
         if (snapshot.exists()) {
           const data = snapshot.data();
           if (data.maintenanceMode !== undefined) setMaintenanceMode(data.maintenanceMode);
+          if (data.maintenanceMessage !== undefined) setMaintenanceMessage(data.maintenanceMessage);
           if (data.announcement !== undefined) setAnnouncement(data.announcement);
+          if (data.contactEmail !== undefined) setContactEmail(data.contactEmail);
+          if (data.contactDescription !== undefined) setContactDescription(data.contactDescription);
           if (data.themeColor !== undefined) {
             document.documentElement.setAttribute('data-theme', data.themeColor);
           }
@@ -121,7 +137,7 @@ export default function App() {
         <Settings className="w-16 h-16 text-accent-500 mb-6 animate-spin-slow" />
         <h1 className="text-4xl font-black italic uppercase tracking-tight mb-4">Under Maintenance</h1>
         <p className="text-zinc-400 max-w-md text-lg">
-          We are currently updating our systems. Please check back later for the latest racing data.
+          {maintenanceMessage}
         </p>
         <button 
           onClick={() => setActiveTab('admin')} 
@@ -234,17 +250,17 @@ export default function App() {
               <Calendar className="w-4 h-4" />
               Schedule
             </button>
-            {enableAIPredictor && (
+            {enableNews && (
               <button
-                onClick={() => setActiveTab('ai')}
+                onClick={() => setActiveTab('news')}
                 className={`pb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors whitespace-nowrap border-b-2 ${
-                  activeTab === 'ai'
+                  activeTab === 'news'
                     ? 'border-accent-600 text-white'
                     : 'border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-700'
                 }`}
               >
-                <Bot className="w-4 h-4" />
-                AI Strategist
+                <Newspaper className="w-4 h-4" />
+                Latest News
               </button>
             )}
             <button
@@ -269,6 +285,17 @@ export default function App() {
               <Mail className="w-4 h-4" />
               Contact
             </button>
+            <button
+              onClick={() => setActiveTab('quick-links')}
+              className={`pb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-widest transition-colors whitespace-nowrap border-b-2 ${
+                activeTab === 'quick-links'
+                  ? 'border-accent-600 text-white'
+                  : 'border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-700'
+              }`}
+            >
+              <Link className="w-4 h-4" />
+              Quick Links
+            </button>
           </div>
         </div>
         )}
@@ -284,34 +311,27 @@ export default function App() {
               setIsAuthenticated={setIsAdminAuthenticated}
               settings={{
                 themeColor, announcement, siteTitle, defaultTab, 
-                showRaceCountdown, enableAIPredictor, liveTimingMode, 
-                showHistoricalArchive, maintenanceMode, enableGlobalSearch, 
-                enableTelemetry, allowRegistrations, verboseLogging, simulateRace
+                showRaceCountdown, enableNews, liveTimingMode, 
+                showHistoricalArchive, maintenanceMode, maintenanceMessage, enableGlobalSearch, 
+                enableTelemetry, allowRegistrations, verboseLogging, simulateRace,
+                contactEmail, contactDescription
               }}
               setters={{
                 setThemeColor, setAnnouncement, setSiteTitle, setDefaultTab,
-                setShowRaceCountdown, setEnableAIPredictor, setLiveTimingMode,
-                setShowHistoricalArchive, setMaintenanceMode, setEnableGlobalSearch,
-                setEnableTelemetry, setAllowRegistrations, setVerboseLogging, setSimulateRace
+                setShowRaceCountdown, setEnableNews, setLiveTimingMode,
+                setShowHistoricalArchive, setMaintenanceMode, setMaintenanceMessage, setEnableGlobalSearch,
+                setEnableTelemetry, setAllowRegistrations, setVerboseLogging, setSimulateRace,
+                setContactEmail, setContactDescription
               }}
             />
           )}
           {activeTab === 'schedule' && <ScheduleView />}
-          {activeTab === 'ai' && enableAIPredictor && <AIPredictorView />}
+          {activeTab === 'news' && enableNews && <NewsView />}
           {activeTab === 'profile' && <ProfileView />}
-          {activeTab === 'contact' && <ContactView />}
+          {activeTab === 'contact' && <ContactView contactEmail={contactEmail} contactDescription={contactDescription} />}
+          {activeTab === 'quick-links' && <QuickLinksView />}
         </div>
       </main>
-
-      {!maintenanceMode && (
-      <button
-        onClick={() => setActiveTab('admin')}
-        className="fixed bottom-4 right-4 p-3 bg-zinc-900 border border-zinc-800 text-zinc-500 hover:text-white rounded-full shadow-lg transition-all opacity-50 hover:opacity-100 focus:opacity-100 z-50"
-        title="Admin Settings"
-      >
-        <Settings className="w-5 h-5" />
-      </button>
-      )}
     </div>
   );
 }

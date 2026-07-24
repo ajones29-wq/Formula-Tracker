@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Flag, LogOut, LogIn, Search, Settings } from 'lucide-react';
+import { Flag, LogOut, LogIn, Search, Settings, User as UserIcon } from 'lucide-react';
 import { initFirebase, signInWithGoogle, logout } from '../lib/firebase';
 import { User } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import { GlobalSearch } from './GlobalSearch';
 
 export function Header({ onAdminClick, onProfileClick }: { onAdminClick?: () => void, onProfileClick?: () => void }) {
   const [user, setUser] = useState<User | null>(null);
+  const [customPhotoURL, setCustomPhotoURL] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [siteTitle, setSiteTitle] = useState('Formula Tracker');
   const [enableSearch, setEnableSearch] = useState(true);
@@ -13,16 +15,40 @@ export function Header({ onAdminClick, onProfileClick }: { onAdminClick?: () => 
   useEffect(() => {
     let unsubscribe: () => void;
     let authInstance: any;
-    initFirebase().then(({ auth }) => {
+    initFirebase().then(({ auth, db }) => {
       authInstance = auth;
-      unsubscribe = auth.onAuthStateChanged((user) => {
+      unsubscribe = auth.onAuthStateChanged(async (user) => {
         setUser(user);
+        if (user) {
+          // Fetch custom photo from Firestore
+          try {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+              setCustomPhotoURL(userDoc.data().photoURL || null);
+            }
+          } catch (err) {
+            console.error('Error fetching custom photo:', err);
+          }
+        } else {
+          setCustomPhotoURL(null);
+        }
       });
     }).catch(console.error);
     
-    const handleProfileUpdate = () => {
+    const handleProfileUpdate = async () => {
       if (authInstance && authInstance.currentUser) {
         setUser({ ...authInstance.currentUser });
+        
+        // Refetch from Firestore on update
+        try {
+          const { db } = await initFirebase();
+          const userDoc = await getDoc(doc(db, 'users', authInstance.currentUser.uid));
+          if (userDoc.exists()) {
+            setCustomPhotoURL(userDoc.data().photoURL || null);
+          }
+        } catch (err) {
+          console.error('Error refetching custom photo:', err);
+        }
       }
     };
     window.addEventListener('profile-updated', handleProfileUpdate);
@@ -84,6 +110,16 @@ export function Header({ onAdminClick, onProfileClick }: { onAdminClick?: () => 
               
               <div className="w-px h-6 bg-zinc-800 hidden sm:block"></div>
 
+              {user && (
+                <button
+                  onClick={onAdminClick}
+                  className="flex items-center justify-center w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                  title="Admin Portal"
+                >
+                  <UserIcon className="w-4 h-4" />
+                </button>
+              )}
+
               <span className="flex items-center gap-2 text-xs font-medium text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full uppercase tracking-wider hidden lg:flex">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
                 Live Sync
@@ -93,9 +129,9 @@ export function Header({ onAdminClick, onProfileClick }: { onAdminClick?: () => 
                 <div className="flex items-center gap-3">
                   <button onClick={onProfileClick} className="focus:outline-none focus:ring-2 focus:ring-accent-500 rounded-full transition-transform hover:scale-105">
                     <img 
-                      src={user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email || 'User')}`} 
+                      src={customPhotoURL || user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email || 'User')}`} 
                       alt="Profile" 
-                      className="w-8 h-8 rounded-full border border-zinc-800"
+                      className="w-8 h-8 rounded-full border border-zinc-800 object-cover"
                     />
                   </button>
                   <button 

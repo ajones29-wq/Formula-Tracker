@@ -2,12 +2,11 @@ import { Mail, Copy, Check, ExternalLink, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'motion/react';
 
-export function ContactView() {
-  const email = 'ajones29@erc.nsw.edu.au';
+export function ContactView({ contactEmail = 'ajones29@erc.nsw.edu.au', contactDescription = 'Have questions about the 2026 season or feedback for the tracker? I\'d love to hear from you.' }: { contactEmail?: string, contactDescription?: string }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(email);
+    navigator.clipboard.writeText(contactEmail);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -23,7 +22,7 @@ export function ContactView() {
           <div className="relative z-10">
             <h2 className="text-3xl font-black uppercase tracking-tighter mb-2">Get in Touch</h2>
             <p className="text-accent-100 font-medium max-w-md">
-              Have questions about the 2026 season or feedback for the tracker? I'd love to hear from you.
+              {contactDescription}
             </p>
           </div>
           <Mail className="absolute -right-8 -bottom-8 w-48 h-48 text-white/10 rotate-12" />
@@ -56,11 +55,11 @@ export function ContactView() {
               </div>
               
               <div className="text-xl sm:text-2xl font-mono font-bold text-white break-all">
-                {email}
+                {contactEmail}
               </div>
 
               <a 
-                href={`mailto:${email}`}
+                href={`mailto:${contactEmail}`}
                 className="mt-6 flex items-center justify-center gap-2 w-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold uppercase tracking-widest text-xs py-3 rounded-lg transition-all"
               >
                 Send Message

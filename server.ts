@@ -4,6 +4,12 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import nodemailer from "nodemailer";
 import { google } from "googleapis";
+import { rateLimit } from "express-rate-limit";
+import helmet from "helmet";
+import cors from "cors";
+import hpp from "hpp";
+import morgan from "morgan";
+import Parser from "rss-parser";
 
 // In-memory store for 2FA codes (in a real app, use Redis or a database)
 const twoFactorCodes = new Map<string, { code: string; expires: number }>();
@@ -59,13 +65,63 @@ async function send2FAToGoogleDoc(accessToken: string, code: string) {
 }
 
 async function startServer() {
-  const app = express();
-  const PORT = 3000;
+  try {
+    const app = express();
+    app.set('trust proxy', 1);
+    app.use(morgan('dev'));
 
-  app.use(express.json());
+    // Security headers - Disable CSP in development as it often interferes with Vite
+    if (process.env.NODE_ENV === 'production') {
+      app.use(helmet({
+        contentSecurityPolicy: {
+          directives: {
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+            "img-src": ["'self'", "data:", "https://*.googleusercontent.com", "https://*.googleapis.com", "https://ui-avatars.com"],
+            "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            "connect-src": ["'self'", "https://*.googleapis.com", "https://*.firebase.com", "wss://*.run.app"],
+          },
+        },
+      }));
+    } else {
+      app.use(helmet({
+        contentSecurityPolicy: false,
+      }));
+    }
+
+    // CORS configuration
+    app.use(cors({
+      origin: true, // Allow all origins in dev, reflect origin
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    }));
+
+    const PORT = 3000;
+
+  // Rate Limiting
+  const generalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    standardHeaders: 'draft-7', // combined `RateLimit` header
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    message: 'Too many requests from this IP, please try again after 15 minutes',
+  });
+
+  const apiLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000, // 5 minutes
+    limit: 20, // Limit each IP to 20 requests per 5 minutes for sensitive endpoints
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    message: 'Too many API requests, please slow down',
+  });
+
+  // Apply general rate limiting to all requests
+  app.use(generalLimiter);
+  app.use(express.json({ limit: '10kb' })); // Limit JSON payload size
+  app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+  app.use(hpp()); // Prevent HTTP Parameter Pollution
 
   // API routes FIRST
-  app.post("/api/admin/login", async (req, res) => {
+  app.post("/api/admin/login", apiLimiter, async (req, res) => {
     const { password, googleToken } = req.body;
     
     if (password !== "Piastri") {
@@ -97,7 +153,7 @@ async function startServer() {
     res.json({ success: true, require2FA: true, email: adminEmail, documentId });
   });
 
-  app.post("/api/admin/verify", async (req, res) => {
+  app.post("/api/admin/verify", apiLimiter, async (req, res) => {
     const { email, code } = req.body;
     
     if (!email || !code) {
@@ -123,7 +179,7 @@ async function startServer() {
     res.json({ success: true, token: "admin_token_" + Date.now() });
   });
 
-  app.post("/api/predict", async (req, res) => {
+  app.post("/api/predict", apiLimiter, async (req, res) => {
     try {
       const { prompt } = req.body;
       if (!prompt) {
@@ -138,17 +194,31 @@ async function startServer() {
       const ai = new GoogleGenAI({ apiKey });
       
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-1.5-flash",
         contents: prompt,
         config: {
           systemInstruction: "You are a highly knowledgeable Formula 1 strategist and data analyst. You can predict race results, provide strategies, and offer insightful F1 information based on current and historical data. Be clear, concise, and professional. Format responses with markdown."
         }
       });
-
       res.json({ result: response.text });
     } catch (error) {
       console.error("AI Prediction Error:", error);
       res.status(500).json({ error: "Failed to generate prediction" });
+    }
+  });
+
+  app.get("/api/f1-news", async (req, res) => {
+    try {
+      const parser = new Parser({
+        customFields: {
+          item: ['enclosure']
+        }
+      });
+      const feed = await parser.parseURL('https://www.autosport.com/rss/feed/f1');
+      res.json(feed.items);
+    } catch (error) {
+      console.error("Failed to fetch F1 news:", error);
+      res.status(500).json({ error: "Failed to fetch F1 news" });
     }
   });
 
@@ -168,8 +238,11 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+  }
 }
 
 startServer();
