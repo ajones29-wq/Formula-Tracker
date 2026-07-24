@@ -227,7 +227,7 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
           <p className="text-zinc-400 text-sm text-center mb-8">
             {step === 'password' 
               ? 'Enter password to configure website settings' 
-              : `Enter the 6-digit code sent to ${adminEmail}`
+              : 'Enter the 6-digit code below'
             }
           </p>
           

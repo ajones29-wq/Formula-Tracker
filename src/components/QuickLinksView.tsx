@@ -1,4 +1,4 @@
-import { Globe, MonitorPlay, ExternalLink, Link, Trophy, Gamepad2, Unlock } from 'lucide-react';
+import { Globe, MonitorPlay, ExternalLink, Link, Trophy, Gamepad2, Unlock, Github } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export function QuickLinksView() {
@@ -95,7 +95,7 @@ export function QuickLinksView() {
           href="https://www.formula1.com/en/page/unlocked/exclusive-content"
           target="_blank"
           rel="noopener noreferrer"
-          className="group bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-accent-500/50 transition-all shadow-lg hover:shadow-xl hover:shadow-accent-500/10 flex items-center gap-6 md:col-span-2 lg:col-span-1"
+          className="group bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-accent-500/50 transition-all shadow-lg hover:shadow-xl hover:shadow-accent-500/10 flex items-center gap-6"
         >
           <div className="bg-zinc-950 p-4 rounded-full text-zinc-400 group-hover:text-accent-500 transition-colors">
             <Unlock className="w-8 h-8" />
@@ -106,6 +106,24 @@ export function QuickLinksView() {
               <ExternalLink className="w-4 h-4 opacity-50" />
             </h3>
             <p className="text-sm text-zinc-400">Get closer to the grid with exclusive stories, videos, and rewards.</p>
+          </div>
+        </a>
+
+        <a
+          href="https://github.com/ajones29-wq/Formula-Tracker"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group bg-zinc-900 border border-zinc-800 rounded-xl p-6 hover:border-accent-500/50 transition-all shadow-lg hover:shadow-xl hover:shadow-accent-500/10 flex items-center gap-6"
+        >
+          <div className="bg-zinc-950 p-4 rounded-full text-zinc-400 group-hover:text-accent-500 transition-colors">
+            <Github className="w-8 h-8" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-xl font-bold uppercase tracking-wider mb-1 group-hover:text-accent-500 transition-colors flex items-center gap-2">
+              GitHub
+              <ExternalLink className="w-4 h-4 opacity-50" />
+            </h3>
+            <p className="text-sm text-zinc-400">View the Formula Tracker source code on GitHub.</p>
           </div>
         </a>
       </div>
