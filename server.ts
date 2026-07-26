@@ -208,18 +208,38 @@ async function startServer() {
   });
 
   app.get("/api/f1-news", async (req, res) => {
-    try {
-      const parser = new Parser({
-        customFields: {
-          item: ['enclosure']
+    const feeds = [
+      'https://www.autosport.com/rss/feed/f1',
+      'https://feeds.bbci.co.uk/sport/formula1/rss.xml',
+      'https://www.skysports.com/rss/12433'
+    ];
+    const parser = new Parser({
+      timeout: 6000,
+      customFields: {
+        item: ['enclosure']
+      }
+    });
+
+    for (const feedUrl of feeds) {
+      try {
+        const feed = await parser.parseURL(feedUrl);
+        if (feed && feed.items && feed.items.length > 0) {
+          return res.json(feed.items);
         }
-      });
-      const feed = await parser.parseURL('https://www.autosport.com/rss/feed/f1');
-      res.json(feed.items);
-    } catch (error) {
-      console.error("Failed to fetch F1 news:", error);
-      res.status(500).json({ error: "Failed to fetch F1 news" });
+      } catch (err) {
+        console.warn(`Failed to parse RSS feed from ${feedUrl}:`, err);
+      }
     }
+
+    // Fallback news items if external RSS feeds are unreachable
+    return res.json([
+      {
+        title: "2026 Formula 1 Technical Regulations & Season Preview",
+        link: "https://www.formula1.com/en/latest",
+        pubDate: new Date().toISOString(),
+        contentSnippet: "Stay up to date with the latest stories, team developments, driver standings, and technical insights directly from the paddock."
+      }
+    ]);
   });
 
   // Vite middleware for development

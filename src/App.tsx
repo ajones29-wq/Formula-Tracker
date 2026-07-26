@@ -10,16 +10,19 @@ import { StandingsView } from './components/StandingsView';
 import { ResultsView } from './components/ResultsView';
 import { NewsView } from './components/NewsView';
 import { ProfileView } from './components/ProfileView';
+import { ResetAccountView } from './components/ResetAccountView';
 import { ArchivalResultsView } from './components/ArchivalResultsView';
 import { AdminView } from './components/AdminView';
 import { ContactView } from './components/ContactView';
 import { QuickLinksView } from './components/QuickLinksView';
+import { Footer } from './components/Footer';
 import { RaceCountdown } from './components/RaceCountdown';
-import { Calendar, Trophy, Timer, Newspaper, Bot, User as UserIcon, Archive, Award, ChevronDown, ExternalLink, Settings, Mail, Globe, MonitorPlay, Link } from 'lucide-react';
+import { Calendar, Trophy, Timer, Newspaper, Bot, User as UserIcon, Archive, Award, ChevronDown, ExternalLink, Settings, Mail, Globe, MonitorPlay, Link, KeyRound } from 'lucide-react';
 import { initFirebase } from './lib/firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
+import { initTheme } from './lib/theme';
 
-type Tab = 'standings' | 'results' | 'archive' | 'admin' | 'schedule' | 'news' | 'profile' | 'contact' | 'quick-links';
+type Tab = 'standings' | 'results' | 'archive' | 'admin' | 'schedule' | 'news' | 'profile' | 'contact' | 'quick-links' | 'reset-account';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab | null>(null);
@@ -46,6 +49,8 @@ export default function App() {
 
   // Initialize theme from localStorage
   useEffect(() => {
+    initTheme();
+
     const loadLocalSettings = () => {
       const savedTheme = localStorage.getItem('app-theme') || 'red';
       setThemeColor(savedTheme);
@@ -105,19 +110,27 @@ export default function App() {
     let unsubscribe: () => void;
     initFirebase().then(({ db }) => {
       const settingsRef = doc(db, 'settings', 'global');
-      unsubscribe = onSnapshot(settingsRef, (snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.data();
-          if (data.maintenanceMode !== undefined) setMaintenanceMode(data.maintenanceMode);
-          if (data.maintenanceMessage !== undefined) setMaintenanceMessage(data.maintenanceMessage);
-          if (data.announcement !== undefined) setAnnouncement(data.announcement);
-          if (data.contactEmail !== undefined) setContactEmail(data.contactEmail);
-          if (data.contactDescription !== undefined) setContactDescription(data.contactDescription);
-          if (data.themeColor !== undefined) {
-            document.documentElement.setAttribute('data-theme', data.themeColor);
+      unsubscribe = onSnapshot(
+        settingsRef, 
+        (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.data();
+            if (data.maintenanceMode !== undefined) setMaintenanceMode(data.maintenanceMode);
+            if (data.maintenanceMessage !== undefined) setMaintenanceMessage(data.maintenanceMessage);
+            if (data.announcement !== undefined) setAnnouncement(data.announcement);
+            if (data.contactEmail !== undefined) setContactEmail(data.contactEmail);
+            if (data.contactDescription !== undefined) setContactDescription(data.contactDescription);
+            if (data.themeColor !== undefined) {
+              document.documentElement.setAttribute('data-theme', data.themeColor);
+            }
           }
+        },
+        (error) => {
+          console.warn('Firestore snapshot connection warning (using local fallback settings):', error.message);
         }
-      });
+      );
+    }).catch((err) => {
+      console.warn('Firebase init skipped or failed:', err);
     });
 
     return () => {
@@ -150,7 +163,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-50 selection:bg-accent-500/30">
+    <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-50 selection:bg-accent-500/30">
       <Header onAdminClick={() => setActiveTab('admin')} onProfileClick={() => setActiveTab('profile')} />
       
       {!maintenanceMode && announcement && (
@@ -159,7 +172,7 @@ export default function App() {
         </div>
       )}
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {!maintenanceMode && showRaceCountdown && <RaceCountdown />}
 
@@ -328,10 +341,19 @@ export default function App() {
           {activeTab === 'schedule' && <ScheduleView />}
           {activeTab === 'news' && enableNews && <NewsView />}
           {activeTab === 'profile' && <ProfileView />}
+          {activeTab === 'reset-account' && <ResetAccountView onBackToProfile={() => setActiveTab('profile')} />}
           {activeTab === 'contact' && <ContactView contactEmail={contactEmail} contactDescription={contactDescription} />}
           {activeTab === 'quick-links' && <QuickLinksView />}
         </div>
       </main>
+
+      <Footer 
+        siteTitle={siteTitle} 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        showHistoricalArchive={showHistoricalArchive} 
+        enableNews={enableNews} 
+      />
     </div>
   );
 }
