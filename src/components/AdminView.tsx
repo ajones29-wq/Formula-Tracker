@@ -22,7 +22,6 @@ interface AdminViewProps {
     allowRegistrations: boolean;
     verboseLogging: boolean;
     simulateRace: boolean;
-    contactEmail?: string;
     contactDescription?: string;
   };
   setters: {
@@ -41,7 +40,6 @@ interface AdminViewProps {
     setAllowRegistrations: (val: boolean) => void;
     setVerboseLogging: (val: boolean) => void;
     setSimulateRace: (val: boolean) => void;
-    setContactEmail?: (val: string) => void;
     setContactDescription?: (val: string) => void;
   };
 }
@@ -63,7 +61,7 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
     showRaceCountdown, enableNews, liveTimingMode, 
     showHistoricalArchive, maintenanceMode, maintenanceMessage, enableGlobalSearch, 
     enableTelemetry, allowRegistrations, verboseLogging, simulateRace,
-    contactEmail, contactDescription
+    contactDescription
   } = settings;
 
   const {
@@ -71,7 +69,7 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
     setShowRaceCountdown, setEnableNews, setLiveTimingMode,
     setShowHistoricalArchive, setMaintenanceMode, setMaintenanceMessage, setEnableGlobalSearch,
     setEnableTelemetry, setAllowRegistrations, setVerboseLogging, setSimulateRace,
-    setContactEmail, setContactDescription
+    setContactDescription
   } = setters;
   
   // Settings are now managed by App.tsx props
@@ -183,7 +181,6 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
       localStorage.setItem('app-allow-registrations', allowRegistrations.toString());
       localStorage.setItem('app-verbose-logging', verboseLogging.toString());
       localStorage.setItem('app-simulate-race', simulateRace.toString());
-      if (contactEmail) localStorage.setItem('app-contact-email', contactEmail);
       if (contactDescription) localStorage.setItem('app-contact-description', contactDescription);
       
       document.documentElement.setAttribute('data-theme', themeColor);
@@ -197,7 +194,6 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
         announcement,
         siteTitle,
         themeColor,
-        contactEmail,
         contactDescription,
         updatedAt: new Date().toISOString(),
         updatedBy: auth.currentUser?.email || 'admin'
@@ -403,19 +399,6 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
                 placeholder="Enter message to display during maintenance mode..."
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-accent-500 h-24 resize-none"
               ></textarea>
-            </div>
-
-            <div>
-              <label className="block text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">
-                Contact Email
-              </label>
-              <input 
-                type="email"
-                value={contactEmail || ''}
-                onChange={(e) => setContactEmail?.(e.target.value)}
-                placeholder="e.g. hello@example.com"
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-accent-500"
-              />
             </div>
 
             <div>

@@ -209,7 +209,6 @@ async function startServer() {
 
   app.get("/api/f1-news", async (req, res) => {
     const feeds = [
-      'https://www.autosport.com/rss/feed/f1',
       'https://feeds.bbci.co.uk/sport/formula1/rss.xml',
       'https://www.skysports.com/rss/12433'
     ];
@@ -227,7 +226,7 @@ async function startServer() {
           return res.json(feed.items);
         }
       } catch (err) {
-        console.warn(`Failed to parse RSS feed from ${feedUrl}:`, err);
+        // Silently continue to the next feed if one fails
       }
     }
 

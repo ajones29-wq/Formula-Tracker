@@ -44,8 +44,7 @@ export default function App() {
   const [allowRegistrations, setAllowRegistrations] = useState(false);
   const [verboseLogging, setVerboseLogging] = useState(false);
   const [simulateRace, setSimulateRace] = useState(false);
-  const [contactEmail, setContactEmail] = useState('ajones29@erc.nsw.edu.au');
-  const [contactDescription, setContactDescription] = useState('Have questions about the 2026 season or feedback for the tracker? I\'d love to hear from you.');
+  const [contactDescription, setContactDescription] = useState('Have questions about the 2026 season or feedback for the tracker? Check out our GitHub repository.');
 
   // Initialize theme from localStorage
   useEffect(() => {
@@ -92,9 +91,6 @@ export default function App() {
       const savedSimulate = localStorage.getItem('app-simulate-race');
       if (savedSimulate !== null) setSimulateRace(savedSimulate === 'true');
 
-      const savedContactEmail = localStorage.getItem('app-contact-email');
-      if (savedContactEmail !== null) setContactEmail(savedContactEmail);
-
       const savedContactDesc = localStorage.getItem('app-contact-description');
       if (savedContactDesc !== null) setContactDescription(savedContactDesc);
 
@@ -118,7 +114,6 @@ export default function App() {
             if (data.maintenanceMode !== undefined) setMaintenanceMode(data.maintenanceMode);
             if (data.maintenanceMessage !== undefined) setMaintenanceMessage(data.maintenanceMessage);
             if (data.announcement !== undefined) setAnnouncement(data.announcement);
-            if (data.contactEmail !== undefined) setContactEmail(data.contactEmail);
             if (data.contactDescription !== undefined) setContactDescription(data.contactDescription);
             if (data.themeColor !== undefined) {
               document.documentElement.setAttribute('data-theme', data.themeColor);
@@ -327,14 +322,14 @@ export default function App() {
                 showRaceCountdown, enableNews, liveTimingMode, 
                 showHistoricalArchive, maintenanceMode, maintenanceMessage, enableGlobalSearch, 
                 enableTelemetry, allowRegistrations, verboseLogging, simulateRace,
-                contactEmail, contactDescription
+                contactDescription
               }}
               setters={{
                 setThemeColor, setAnnouncement, setSiteTitle, setDefaultTab,
                 setShowRaceCountdown, setEnableNews, setLiveTimingMode,
                 setShowHistoricalArchive, setMaintenanceMode, setMaintenanceMessage, setEnableGlobalSearch,
                 setEnableTelemetry, setAllowRegistrations, setVerboseLogging, setSimulateRace,
-                setContactEmail, setContactDescription
+                setContactDescription
               }}
             />
           )}
@@ -342,7 +337,7 @@ export default function App() {
           {activeTab === 'news' && enableNews && <NewsView />}
           {activeTab === 'profile' && <ProfileView />}
           {activeTab === 'reset-account' && <ResetAccountView onBackToProfile={() => setActiveTab('profile')} />}
-          {activeTab === 'contact' && <ContactView contactEmail={contactEmail} contactDescription={contactDescription} />}
+          {activeTab === 'contact' && <ContactView contactDescription={contactDescription} />}
           {activeTab === 'quick-links' && <QuickLinksView />}
         </div>
       </main>
