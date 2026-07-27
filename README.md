@@ -5,7 +5,7 @@ Formula Tracker is a comprehensive Formula 1 dashboard built with React, Vite, a
 ## Previews
 
 - **Shared App URL:** [https://ais-pre-5fyg2oe7yfl3r5jtxbqjrp-428217379694.asia-southeast1.run.app](https://ais-pre-5fyg2oe7yfl3r5jtxbqjrp-428217379694.asia-southeast1.run.app)
-- **Development App URL:** [https://ais-dev-5fyg2oe7yfl3r5jtxbqjrp-428217379694.asia-southeast1.run.app](https://ais-dev-5fyg2oe7yfl3r5jtxbqjrp-428217379694.asia-southeast1.run.app) - USE THIS LINK!
+- **Development App URL:** [https://ais-dev-5fyg2oe7yfl3r5jtxbqjrp-428217379694.asia-southeast1.run.app](https://ais-dev-5fyg2oe7yfl3r5jtxbqjrp-428217379694.asia-southeast1.run.app)
 
 ## Features
 
