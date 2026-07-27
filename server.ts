@@ -42,19 +42,23 @@ async function send2FAToGoogleDoc(accessToken: string, code: string) {
     documentId = createResponse.data.documentId!;
   }
 
-  // 3. Append code to the document
-  const timestamp = new Date().toLocaleString();
-  
+  // 3. Clear document and insert code
   await docs.documents.batchUpdate({
     documentId,
     requestBody: {
       requests: [
         {
-          insertText: {
-            location: {
-              index: 1, // Insert at the beginning
+          deleteContentRange: {
+            range: {
+              startIndex: 1,
+              endIndex: 2, // This is a bit tricky, docs need at least one character
             },
-            text: `[${timestamp}] 2FA Code: ${code}\n`,
+          },
+        },
+        {
+          insertText: {
+            location: { index: 1 },
+            text: `Your Formula 1 Tracker Admin 2FA code is: ${code}\nGenerated at: ${new Date().toLocaleString()}`,
           },
         },
       ],
@@ -65,50 +69,51 @@ async function send2FAToGoogleDoc(accessToken: string, code: string) {
 }
 
 async function startServer() {
-  try {
-    const app = express();
-    app.set('trust proxy', 1);
-    app.use(morgan('dev'));
+  const app = express();
 
-    // Security headers - Disable CSP in development as it often interferes with Vite
-    if (process.env.NODE_ENV === 'production') {
-      app.use(helmet({
-        contentSecurityPolicy: {
-          directives: {
-            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-            "img-src": ["'self'", "data:", "https://*.googleusercontent.com", "https://*.googleapis.com", "https://ui-avatars.com"],
-            "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-            "connect-src": ["'self'", "https://*.googleapis.com", "https://*.firebase.com", "wss://*.run.app"],
-          },
+  // Basic security middleware
+  app.use(morgan('dev'));
+  
+  if (process.env.NODE_ENV === "production") {
+    app.use(helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://apis.google.com"],
+          styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+          fontSrc: ["'self'", "https://fonts.gstatic.com"],
+          imgSrc: ["'self'", "data:", "https://*", "http://*"],
+          connectSrc: ["'self'", "https://*", "wss://*"],
         },
-      }));
-    } else {
-      app.use(helmet({
-        contentSecurityPolicy: false,
-      }));
-    }
-
-    // CORS configuration
-    app.use(cors({
-      origin: true, // Allow all origins in dev, reflect origin
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      },
     }));
+  } else {
+    app.use(helmet({
+      contentSecurityPolicy: false,
+    }));
+  }
 
-    const PORT = 3000;
+  // CORS configuration
+  app.use(cors({
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }));
+
+  const PORT = 3000;
 
   // Rate Limiting
   const generalLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-    standardHeaders: 'draft-7', // combined `RateLimit` header
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
     message: 'Too many requests from this IP, please try again after 15 minutes',
   });
 
   const apiLimiter = rateLimit({
-    windowMs: 5 * 60 * 1000, // 5 minutes
-    limit: 20, // Limit each IP to 20 requests per 5 minutes for sensitive endpoints
+    windowMs: 5 * 60 * 1000,
+    limit: 20,
     standardHeaders: 'draft-7',
     legacyHeaders: false,
     message: 'Too many API requests, please slow down',
@@ -116,9 +121,9 @@ async function startServer() {
 
   // Apply general rate limiting to all requests
   app.use(generalLimiter);
-  app.use(express.json({ limit: '10kb' })); // Limit JSON payload size
+  app.use(express.json({ limit: '10kb' }));
   app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-  app.use(hpp()); // Prevent HTTP Parameter Pollution
+  app.use(hpp());
 
   // API routes FIRST
   app.post("/api/admin/login", apiLimiter, async (req, res) => {
@@ -259,9 +264,6 @@ async function startServer() {
   app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server running on http://localhost:${PORT}`);
     });
-  } catch (error) {
-    console.error("Failed to start server:", error);
-  }
 }
 
 startServer();

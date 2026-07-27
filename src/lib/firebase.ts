@@ -125,7 +125,11 @@ export const logout = async () => {
 export const sendPasswordResetEmailLink = async (email: string) => {
   const { auth } = await initFirebase();
   try {
-    await sendPasswordResetEmail(auth, email);
+    const actionCodeSettings = {
+      url: typeof window !== 'undefined' ? window.location.origin + '/' : 'https://ais-pre-5fyg2oe7yfl3r5jtxbqjrp-428217379694.asia-southeast1.run.app/',
+      handleCodeInApp: false
+    };
+    await sendPasswordResetEmail(auth, email, actionCodeSettings);
     return true;
   } catch (error) {
     console.error('Error sending password reset email:', error);

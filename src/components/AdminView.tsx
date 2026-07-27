@@ -556,6 +556,7 @@ export function AdminView({ isAuthenticated, setIsAuthenticated, settings, sette
             </div>
             <p className="text-[10px] text-zinc-500">Google Docs based secondary out-of-band verification active</p>
           </div>
+
         </div>
       </div>
       

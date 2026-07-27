@@ -563,7 +563,7 @@ export function ResetAccountView({ onBackToProfile, defaultEmail = '', defaultMo
               <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0" />
               <div>
                 <span className="font-bold text-white block uppercase tracking-wider">Account Protection Advice</span>
-                <span>Never share your password or 2FA codes with anyone. Formula Tracker staff will never ask for your password.</span>
+                <span>Never share your password with anyone. Formula Tracker staff will never ask for your password.</span>
               </div>
             </div>
           </div>
