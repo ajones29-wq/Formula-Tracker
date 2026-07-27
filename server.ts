@@ -70,6 +70,9 @@ async function send2FAToGoogleDoc(accessToken: string, code: string) {
 
 async function startServer() {
   const app = express();
+  
+  // Trust the first proxy (required for accurate rate limiting in Cloud Run/Vercel/etc)
+  app.set('trust proxy', 1);
 
   // Basic security middleware
   app.use(morgan('dev'));
